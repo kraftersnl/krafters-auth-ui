@@ -22,7 +22,7 @@ const { mfaCredentials, mfaError, recoveryCodeInputRef } = useMfa();
 
 <style>
 .mfa-recovery-code-confirmation {
-  .error-message {
+  .auth-error {
     margin-block-start: 0rem;
   }
 }

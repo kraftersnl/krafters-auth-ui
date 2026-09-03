@@ -130,7 +130,7 @@ async function toggleUseRecoveryCode() {
     margin-inline: auto;
   }
 
-  .error-message {
+  .auth-error {
     p,
     ul {
       font-size: var(--font-size-sm);

@@ -194,7 +194,7 @@ defineExpose({ submitting, error });
 
 <style>
 .login-form {
-  .error-message {
+  .auth-error {
     margin-block-start: 0rem;
     max-width: none;
   }

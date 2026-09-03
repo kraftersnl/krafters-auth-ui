@@ -27,7 +27,7 @@ const { mfaCredentials, mfaError, codeInputRef } = useMfa();
 
 <style>
 .mfa-code-confirmation {
-  .error-message {
+  .auth-error {
     margin-block-start: 0rem;
   }
 }

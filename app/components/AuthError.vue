@@ -8,7 +8,7 @@ defineProps<{
   <!-- Fortify returns its validation messages untranslated, so the region is
        marked as English for assistive technology (WCAG 3.1.2). -->
   <div lang="en" role="alert">
-    <div v-if="data" class="error-message">
+    <div v-if="data" class="auth-error">
       <ul v-if="data?.errors" role="list">
         <template v-for="(array, key) in data.errors" :key="key">
           <li v-for="message in array" :key="message">{{ message }}</li>
@@ -21,7 +21,15 @@ defineProps<{
 </template>
 
 <style>
-.error-message {
+/*
+ * Styled by the layer rather than reusing the host app's `.error-message`:
+ * that class is defined by each app's own error component, whose CSS chunk is
+ * not necessarily loaded on the page a login form sits on, and two global
+ * definitions of one class would resolve by source order. Written entirely in
+ * Krafters UI tokens, so it still picks up the app's palette and dark mode.
+ * Override it from the app with `.auth-error`.
+ */
+.auth-error {
   margin-inline: auto;
   overflow-wrap: anywhere;
   max-width: fit-content;
@@ -37,11 +45,6 @@ defineProps<{
   ul {
     font-size: var(--font-size-xs);
     margin-block: 0;
-  }
-
-  h2 {
-    font-size: var(--font-size-md);
-    margin-block-end: 0.5rem;
   }
 }
 </style>

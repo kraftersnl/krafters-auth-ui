@@ -23,6 +23,18 @@ Every rule in this layer styles with Krafters UI token _names_ — the colors, f
 
 Krafters UI defines default values for these in its `app/assets/main.css`, but that file is a template rather than an auto-loaded stylesheet — each app keeps its own palette under those names, exactly as it already does for Krafters UI components. If your app renders Krafters UI correctly, this layer inherits the same theming, dark mode included, with no extra CSS.
 
+### Overriding styles
+
+The layer's own class names are stable hooks you can restyle from your app: `.login-form`, `.auth-error`, `.mfa-dialog`, `.mfa-challenge-wrapper`, `.mfa-code-input`, `.mfa-recovery-codes-card`.
+
+`.auth-error` is deliberately _not_ your app's `.error-message`. Reusing that class would mean two global definitions of one selector resolving by source order, and your error component's CSS chunk is not necessarily loaded on the page a login form sits on. `.auth-error` is written purely in tokens, so it picks up your palette and dark mode; restyle it if your errors look different elsewhere:
+
+```css
+.login-form .auth-error {
+  min-width: 100%;
+}
+```
+
 ## How to extend from Krafters Auth UI in your project
 
 ```ts
