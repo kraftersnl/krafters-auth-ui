@@ -4,7 +4,7 @@ const { recoveryCodes, mfaError } = useMfa();
 
 <template>
   <div class="mfa-enable-result-content">
-    <MfaError v-if="mfaError" :data="mfaError" />
+    <AuthError v-if="mfaError" :data="mfaError" />
 
     <template v-else-if="recoveryCodes.length">
       <h2>{{ $t('mfa.recovery-code', 2) }}</h2>

@@ -49,6 +49,8 @@ const {
         label="Sign-in challenge"
         to="/two-factor-authentication"
       />
+
+      <Button variant="link" size="lg" label="Login form" to="/login" />
     </div>
 
     <MfaDialog />

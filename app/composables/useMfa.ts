@@ -6,14 +6,12 @@
  * steps, the challenge page) reads the same instance without prop drilling.
  */
 export function useMfa() {
-  const client = useSanctumClient();
-  const { refreshIdentity } = useSanctumAuth();
-  const route = useRoute();
+  const { client, refreshIdentity, loginRedirectTarget } = useAuth();
 
   const mfaStep = useState<MfaStep>('mfaStep', () => 1);
   const qrCode = useState('qrCode', () => '');
   const recoveryCodes = useState<string[]>('recoveryCodes', () => []);
-  const mfaError = useState<MfaErrorData | null>('mfaError', () => null);
+  const mfaError = useState<AuthErrorData | null>('mfaError', () => null);
 
   const mfaCredentials = useState<MfaCredentials>('mfaCredentials', () => ({
     code: '',
@@ -45,20 +43,8 @@ export function useMfa() {
     () => null,
   );
 
-  /**
-   * Pulls the renderable payload out of whatever the fetch layer threw.
-   * `ofetch` errors carry it on `response._data`; a plain rejected response or
-   * an already-unwrapped error carries it on `_data` / `data`.
-   */
   function setMfaError(error: unknown) {
-    const candidate = error as {
-      response?: { _data?: MfaErrorData };
-      _data?: MfaErrorData;
-      data?: MfaErrorData;
-    } | null;
-
-    mfaError.value =
-      candidate?.response?._data ?? candidate?._data ?? candidate?.data ?? null;
+    mfaError.value = extractAuthError(error);
   }
 
   function resetMfa() {
@@ -166,14 +152,14 @@ export function useMfa() {
   }
 
   /**
-   * Completes the second factor at sign-in and continues to the route the
-   * login flow was interrupted on (`?redirect=`), falling back to the app root.
+   * Completes the second factor at sign-in and continues to wherever the
+   * interrupted login was headed, following the app's Sanctum redirect config.
    */
   async function solveMfaChallenge() {
     mfaError.value = null;
     loadingSolveMfaChallenge.value = true;
 
-    const redirect = (route.query.redirect as string) ?? '/';
+    const redirect = loginRedirectTarget();
 
     try {
       await client('/api/two-factor-challenge', {
@@ -182,7 +168,7 @@ export function useMfa() {
       });
       await refreshIdentity();
 
-      await navigateTo(redirect);
+      if (redirect !== false) await navigateTo(redirect);
     } catch (error) {
       setMfaError(error);
     } finally {

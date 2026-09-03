@@ -16,7 +16,7 @@ const { mfaCredentials, mfaError, recoveryCodeInputRef } = useMfa();
       data-1p-ignore
     />
 
-    <MfaError :data="mfaError" />
+    <AuthError :data="mfaError" />
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  data?: MfaErrorData | null;
+  data?: AuthErrorData | null;
 }>();
 </script>
 

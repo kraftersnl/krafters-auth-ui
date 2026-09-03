@@ -17,7 +17,7 @@ const {
     :click-outside="false"
     @close="mfaError = null"
   >
-    <MfaError v-if="mfaError" :data="mfaError" />
+    <AuthError v-if="mfaError" :data="mfaError" />
 
     <MfaRecoveryCodeList v-else-if="recoveryCodes.length" />
 

@@ -4,7 +4,7 @@ const { mfaError } = useMfa();
 
 <template>
   <div class="mfa-content">
-    <MfaError v-if="mfaError" :data="mfaError" />
+    <AuthError v-if="mfaError" :data="mfaError" />
 
     <p v-else>{{ $t('mfa.disable-success') }}</p>
   </div>

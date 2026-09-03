@@ -1,8 +1,10 @@
 # Krafters Auth UI
 
-Accessible multi-factor authentication UX for [Nuxt](https://nuxt.com) SPAs backed by [Laravel Fortify](https://laravel.com/docs/fortify), in TypeScript.
+Accessible authentication UX for [Nuxt](https://nuxt.com) SPAs backed by [Laravel Fortify](https://laravel.com/docs/fortify), in TypeScript.
 
-Krafters Auth UI is a [Nuxt Layer](https://nuxt.com/docs/getting-started/layers) in a public repository. It ships the whole MFA flow — enable, scan, confirm, recovery codes, disable, and the second-factor step at sign-in — so each app wires up two dialogs and a page instead of rebuilding it.
+Krafters Auth UI is a [Nuxt Layer](https://nuxt.com/docs/getting-started/layers) in a public repository. It ships sign-in and the whole MFA flow — login, the second factor at sign-in, enable, scan, confirm, recovery codes, disable — so each app wires up a form and two dialogs instead of rebuilding them.
+
+Only the _forms_ live here. Page layout — headings, tabs, logos, forgot-password links — stays with each app, and every part an app is likely to restyle is a slot. Cardan Auditor and Cardan Academy share this layer while looking nothing alike.
 
 ## Dependencies
 
@@ -56,36 +58,98 @@ export default defineNuxtConfig({
 
 The layer calls the stock Fortify endpoints, relative to your configured `sanctum.baseUrl`:
 
-| Endpoint                                        | Method            | Used for                         |
-| ----------------------------------------------- | ----------------- | -------------------------------- |
-| `/api/user/two-factor-authentication`           | `POST` / `DELETE` | Enable / disable MFA             |
-| `/api/user/two-factor-qr-code`                  | `GET`             | The setup QR code (inline SVG)   |
-| `/api/user/confirmed-two-factor-authentication` | `POST`            | Confirm the first code           |
-| `/api/user/two-factor-recovery-codes`           | `GET` / `POST`    | Read / regenerate recovery codes |
-| `/api/two-factor-challenge`                     | `POST`            | Second factor at sign-in         |
+| Endpoint                                        | Method            | Used for                                      |
+| ----------------------------------------------- | ----------------- | --------------------------------------------- |
+| `/api/user/two-factor-authentication`           | `POST` / `DELETE` | Enable / disable MFA                          |
+| `/api/user/two-factor-qr-code`                  | `GET`             | The setup QR code (inline SVG)                |
+| `/api/user/confirmed-two-factor-authentication` | `POST`            | Confirm the first code                        |
+| `/api/user/two-factor-recovery-codes`           | `GET` / `POST`    | Read / regenerate recovery codes              |
+| `/api/two-factor-challenge`                     | `POST`            | Second factor at sign-in                      |
+| your `sanctum.endpoints.login`                  | `POST`            | Sign in (path taken from your Sanctum config) |
 
 Enable Fortify's `two-factor-authentication` feature with `confirm: true`, and expose whether MFA is on for the current user in your `/api/user` payload.
 
 ## Usage
 
-### Sign-in challenge
+### Signing in
 
-The layer registers the page **`/two-factor-authentication`** for you. Send the user there when Fortify answers your login request with `two_factor: true`, keeping the route they were heading for:
+Drop `<LoginForm />` into your own login page. It posts to the login endpoint from your Sanctum config, refreshes the identity, and redirects following the same `redirect.keepRequestedRoute` / `redirect.onLogin` rules nuxt-auth-sanctum applies itself — and when Fortify answers `two_factor: true` it sends the user to the challenge page instead, carrying the `?redirect=` along.
 
-```ts
-const response = await login({ email, password });
+The defaults render the Cardan Auditor form: email, password with a reveal button, error region, rule, then a green submit button.
 
-if (response.two_factor) {
-  return navigateTo({
-    path: '/two-factor-authentication',
-    query: { redirect: route.query.redirect },
-  });
-}
+```vue
+<script setup lang="ts">
+definePageMeta({ middleware: ['sanctum:guest'] });
+
+// Share the typed address with the forgot-password form beside it.
+const { userEmail } = useUserProfileDetails();
+</script>
+
+<template>
+  <Card>
+    <LoginForm v-model:email="userEmail" />
+  </Card>
+</template>
 ```
 
-The page reads that `?redirect=` and continues there once the second factor is accepted. It offers a recovery code as an alternative to the app code, and renders inside your app's default layout.
+#### Making it look like your app
 
-To place the challenge somewhere else — a different route, a bespoke layout — create your own page (a page in your app wins over the layer's) and render `<MfaChallenge />` in it.
+Everything variable is a slot or a small prop. The Cardan Academy form has no reveal button, no rule, its own `BaseButton`, the error below the button, and holds the spinner through the page transition — all of it from the outside:
+
+```vue
+<LoginForm
+  :show-password-toggle="false"
+  :divider="false"
+  remember
+  error-position="below-submit"
+  :loading-delay="lgTransition"
+>
+  <template #submit="{ submitting }">
+    <BaseButton
+      type="submit"
+      :label="$t('general.sign-in')"
+      icon="material-symbols:arrow-right-alt"
+      icon-pos="end"
+      :loading="submitting"
+      variant="black"
+      font-size="xs"
+      :height="40"
+    />
+  </template>
+</LoginForm>
+```
+
+| Prop                 | Default                        |                                                                       |
+| -------------------- | ------------------------------ | --------------------------------------------------------------------- |
+| `showPasswordToggle` | `true`                         | Reveal-password button beside the password field                      |
+| `divider`            | `true`                         | Rule between the fields and the submit button                         |
+| `remember`           | `false`                        | Send `remember: true` with the credentials                            |
+| `errorPosition`      | `'above-submit'`               | Or `'below-submit'`                                                   |
+| `size`               | `'lg'`                         | Input size                                                            |
+| `autofocus`          | `true`                         | Focus the email field on mount                                        |
+| `shake`              | `true`                         | Shake the fields when credentials are rejected                        |
+| `twoFactorPath`      | `'/two-factor-authentication'` | Where to go when a second factor is needed                            |
+| `loadingDelay`       | `0`                            | Hold the submit button loading this many ms after the request settles |
+
+| Slot     | Scope            |                                                              |
+| -------- | ---------------- | ------------------------------------------------------------ |
+| `submit` | `{ submitting }` | The submit button                                            |
+| `error`  | `{ error }`      | The error region                                             |
+| `fields` |                  | Extra fields after the password, e.g. a remember-me checkbox |
+| `footer` |                  | Anything at the end of the form                              |
+
+| Model / Event   |                                                                                   |
+| --------------- | --------------------------------------------------------------------------------- |
+| `v-model:email` | Optional. Bind it to share the address with a sibling form; local state otherwise |
+| `@success`      | Credentials accepted and the identity refreshed                                   |
+| `@two-factor`   | Credentials accepted, second factor required                                      |
+| `@error`        | Login rejected, with the error payload                                            |
+
+### Sign-in challenge
+
+The layer registers the page **`/two-factor-authentication`** for you, and `LoginForm` sends the user there on its own — nothing to wire up. It reads the `?redirect=` and continues there once the second factor is accepted, offers a recovery code as an alternative to the app code, and renders inside your app's default layout.
+
+To place the challenge somewhere else — a different route, a bespoke layout — create your own page (a page in your app wins over the layer's), render `<MfaChallenge />` in it, and point `LoginForm`'s `twoFactorPath` at it.
 
 ### Enabling, disabling and recovery codes
 
@@ -136,6 +200,28 @@ Whether MFA is currently on stays your app's call — the flag lives in your `/a
 
 ## API
 
+### `useAuth()`
+
+The app's authentication surface, wrapping nuxt-auth-sanctum so app code has one place to reach for:
+
+|                                                                         |                                                                                                                                                |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client`                                                                | The Sanctum fetch client — this is what most call sites want                                                                                   |
+| `user`, `isAuthenticated`, `init`, `login`, `logout`, `refreshIdentity` | Passed through from `useSanctumAuth()`                                                                                                         |
+| `loginWithoutRedirect(credentials)`                                     | Posts the credentials and returns the raw response, without fetching the identity or redirecting — both wrong while a second factor is pending |
+| `loginRedirectTarget()`                                                 | Where to go after a successful login, following your Sanctum `redirect` config. `false` when the app opted out                                 |
+| `userName`, `userInitials`                                              | Read off the payload's `name`, for avatars                                                                                                     |
+
+`user` is typed as `{ data: AuthUser } | null`, and **`AuthUser` is an empty interface for your app to fill** by declaration merging. Put this anywhere in your app's types:
+
+```ts
+declare global {
+  interface AuthUser extends User {}
+}
+```
+
+Every `useAuth().user` in your app is then typed against your own payload, with no generics at the call sites. Anything specific to your backend — a `mfaEnabled` flag, roles, locale, an avatar URL — belongs in your app's own composable next to that type, not here.
+
 ### `useMfaDialog()`
 
 |                                             |                                                                                       |
@@ -155,22 +241,23 @@ Reach for it to build your own flow. For the standard one, `useMfaDialog()` plus
 
 ### Components
 
-| Component                                                             |                                                         |
-| --------------------------------------------------------------------- | ------------------------------------------------------- |
-| `MfaDialog`                                                           | The enable/disable flow, all six steps. Emits `refresh` |
-| `MfaRecoveryCodesDialog`                                              | Shows and regenerates recovery codes                    |
-| `MfaChallenge`                                                        | The second-factor form used by the challenge page       |
-| `MfaCode`, `MfaRecoveryCode`                                          | The two inputs, with their validation and error region  |
-| `MfaQr`, `MfaEnableResult`, `MfaDisableResult`, `MfaRecoveryCodeList` | Steps of the flow, reusable on their own                |
-| `MfaError`                                                            | Renders a Fortify error or validation payload           |
+| Component                                                             |                                                            |
+| --------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `LoginForm`                                                           | Email + password sign-in, aware of a pending second factor |
+| `MfaDialog`                                                           | The enable/disable flow, all six steps. Emits `refresh`    |
+| `MfaRecoveryCodesDialog`                                              | Shows and regenerates recovery codes                       |
+| `MfaChallenge`                                                        | The second-factor form used by the challenge page          |
+| `MfaCode`, `MfaRecoveryCode`                                          | The two inputs, with their validation and error region     |
+| `MfaQr`, `MfaEnableResult`, `MfaDisableResult`, `MfaRecoveryCodeList` | Steps of the flow, reusable on their own                   |
+| `AuthError`                                                           | Renders a Fortify error or validation payload              |
 
 ## Translations
 
 English and Dutch ship in `i18n/locales`, under the `mfa` namespace. `@nuxtjs/i18n` deep-merges the messages of every layer, so these arrive alongside your app's own namespaces without any configuration. Override a single string by declaring the same key in your app's locale file — the app's message wins.
 
-The layer also uses `general.continue`, `general.confirm`, `general.done` and `general.sign-in` from Krafters UI.
+The layer also uses `general.continue`, `general.confirm`, `general.done`, `general.sign-in`, `general.email`, `password.heading` and `password.show` from Krafters UI. The login _page_ strings — headings, descriptions, forgot-password copy — stay with your app, since only the form lives here.
 
-Fortify returns its own validation messages untranslated; `MfaError` marks that region `lang="en"` so screen readers announce it in the right voice (WCAG 3.1.2).
+Fortify returns its own validation messages untranslated; `AuthError` marks that region `lang="en"` so screen readers announce it in the right voice (WCAG 3.1.2).
 
 ## Accessibility
 
@@ -181,6 +268,7 @@ Built to WCAG 2.2 AA, like everything at Krafters:
 - Errors render in a `role="alert"` region.
 - The QR code is exposed as `role="img"` with a translated name, and the written setup instructions sit beside it rather than only inside the image.
 - Dialogs are native `<dialog>` elements from Krafters UI: modal focus trapping, `Escape` to close, and a labelled heading.
+- `LoginForm`'s reveal-password button is a real toggle button carrying `aria-pressed`, not an icon that silently swaps meaning, and the fields declare `autocomplete="username"` / `"current-password"` (WCAG 1.3.5).
 
 ## Development
 
