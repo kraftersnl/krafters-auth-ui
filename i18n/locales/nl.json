@@ -1,0 +1,28 @@
+{
+  "mfa": {
+    "heading": "Multi-factor authenticatie",
+    "app-config": "Authenticatie-app instellen",
+    "challenge": "Verificatiecode",
+    "challenge-instructions": "Vul de 6-cijferige verificatiecode van je authenticatie-app in.",
+    "challenge-invalid": "Vul een geldige 6-cijferige code in.",
+    "description": "Multi-factor authenticatie is een extra laag van beveiliging voor je account. Het vereist een verificatiecode van een app op je telefoon bij het aanmelden.",
+    "disable": "MFA uitschakelen",
+    "disable-description": "Schakel multi-factor authenticatie uit voor jouw account.",
+    "disable-success": "Multi-factor authenticatie is uitgeschakeld. Je hoeft nu geen verificatiecode meer in te voeren bij het aanmelden.",
+    "done": "Multi-factor authenticatie ingeschakeld",
+    "enable": "MFA inschakelen",
+    "enabled": "MFA ingeschakeld",
+    "qr": "Scan de QR code met je authenticator app",
+    "qr-code-alt": "QR-code voor het instellen van multi-factor authenticatie",
+    "qr-description": "Gebruik een gratis authenticatie-app (zoals Google Authenticator, Microsoft Authenticator of Authy) om deze QR-code te scannen en jouw account in te stellen.",
+    "recovery-code": "Herstelcode | Herstelcodes",
+    "recovery-code-cta": "Geen toegang? ",
+    "recovery-code-description": "Bewaar deze herstelcodes op een veilige plek. Als je jouw apparaat kwijtraakt, kun je een van deze codes gebruiken om in te loggen.",
+    "recovery-code-instructions": "Vul een van je herstelcodes in om in te loggen. Iedere code kan eenmalig gebruikt worden.",
+    "recovery-codes-copy": "Herstelcodes kopiëren",
+    "recovery-codes-generate": "Genereer nieuwe codes",
+    "recovery-codes-show": "Herstelcodes tonen",
+    "use-code": "Gebruik een verificatiecode",
+    "use-recovery-code": "Gebruik een herstelcode"
+  }
+}

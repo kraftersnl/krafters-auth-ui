@@ -1,0 +1,28 @@
+{
+  "mfa": {
+    "heading": "Multi-factor authentication",
+    "app-config": "Set up authentication app",
+    "challenge": "Confirmation code",
+    "challenge-instructions": "Enter the 6-digit confirmation code from your authentication app.",
+    "challenge-invalid": "Please enter a valid 6-digit code.",
+    "description": "Multi-factor authentication is an extra layer of security for your account. It requires you to enter a verification code from an app on your phone when you sign in.",
+    "disable": "Disable MFA",
+    "disable-description": "Disable multi-factor authentication for your account.",
+    "disable-success": "Multi-factor authentication has been disabled. You no longer need to enter a verification code when signing in.",
+    "done": "Multi-factor authentication enabled",
+    "enable": "Enable MFA",
+    "enabled": "MFA Enabled",
+    "qr": "Authenticator app",
+    "qr-code-alt": "QR code for setting up multi-factor authentication",
+    "qr-description": "Use a free authentication app (such as Google Authenticator, Microsoft Authenticator or Authy) to scan this QR code and set up your account.",
+    "recovery-code": "Recovery code | Recovery codes",
+    "recovery-code-cta": "No access? ",
+    "recovery-code-description": "Write down these recovery codes in a safe place. You will need them to sign in if you lose your phone.",
+    "recovery-code-instructions": "Enter one of your recovery codes to sign in. Each code can only be used once.",
+    "recovery-codes-copy": "Copy recovery codes",
+    "recovery-codes-generate": "Generate new codes",
+    "recovery-codes-show": "Show recovery codes",
+    "use-code": "Use a verification code",
+    "use-recovery-code": "Use a recovery code"
+  }
+}

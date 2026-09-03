@@ -1,0 +1,454 @@
+/*
+ * Default Krafters UI design tokens, copied here so the demo renders
+ * standalone. Consuming apps supply their own palette for these same
+ * token names — this file is NOT part of the layer.
+ */
+/* Color design tokens */
+:where(.dark-mode) {
+  --color-scheme: dark;
+
+  --color-accent: hsl(232 100% 67%);
+  --color-accent-bg: hsl(232 79% 15%);
+  --color-accent-text: hsl(232 79% 66%);
+  --color-accent-graphic: hsl(232 100% 66%);
+
+  --color-black: white;
+  --color-text: hsl(220 50% 96%);
+  --color-grey-text: hsl(132 4% 76%);
+  --color-grey-graphic: hsl(140 3% 28%);
+  --color-grey-light: hsl(140 3% 15%);
+  --color-grey-bg: hsl(232 4% 4%);
+  --color-bg: hsl(220 20% 9%);
+  --color-card-bg: hsl(0 0% 3%);
+  --color-white: hsl(0 0% 0%);
+
+  --color-red: hsl(0 100% 60%);
+  --color-red-bg: hsl(0 33% 19%);
+  --color-red-text: hsl(0 69% 67%);
+  --color-red-graphic: hsl(0 63% 65%);
+
+  --color-orange: hsl(30 100% 50%);
+  --color-orange-bg: hsl(30 67% 18%);
+  --color-orange-text: hsl(30 100% 60%);
+  --color-orange-graphic: hsl(30 100% 45%);
+
+  --color-yellow: hsl(60 80% 50%);
+  --color-yellow-bg: hsl(50 43% 20%);
+  --color-yellow-text: hsl(50 70% 50%);
+  --color-yellow-graphic: hsl(60 60% 40%);
+
+  --color-green: hsl(150 100% 28%);
+  --color-green-bg: hsl(150 50% 15%);
+  --color-green-text: hsl(150 50% 55%);
+  --color-green-graphic: hsl(150 100% 33%);
+
+  --color-blue: hsl(220 53% 58%);
+  --color-blue-bg: hsl(240 60% 30%);
+  --color-blue-text: hsl(220 100% 75%);
+  --color-blue-graphic: hsl(220 100% 60%);
+
+  --color-purple: hsl(280 100% 70%);
+  --color-purple-bg: hsl(280 100% 20%);
+  --color-purple-text: hsl(280 100% 70%);
+  --color-purple-graphic: hsl(280 100% 70%);
+
+  --color-pink: hsl(320 100% 75%);
+  --color-pink-bg: hsl(320 100% 15%);
+  --color-pink-text: hsl(320 100% 75%);
+  --color-pink-graphic: hsl(320 100% 75%);
+
+  --color-semi-transparent: hsl(0 0 0 / 35%);
+  --rgb-app-nav: 0 0 0;
+  --hsl-app-nav: 280 26% 9%;
+
+  --shadow-color: 282deg 0% 2%;
+
+  --color-dialog-bg: var(--color-white);
+  --color-input-bg: var(--color-card-bg);
+  --card-border-color: var(--color-grey-bg);
+  --popover-border-color: var(--color-grey-bg);
+
+  .card {
+    --color-input-bg: var(--color-bg);
+  }
+}
+
+:where(.light-mode) {
+  --color-scheme: light;
+
+  --color-accent: hsl(232 100% 58%);
+  --color-accent-bg: hsl(232 79% 92%);
+  --color-accent-text: hsl(232 79% 49%);
+  --color-accent-graphic: hsl(232 100% 58%);
+
+  --color-black: black;
+  --color-text: hsl(220 25% 5%);
+  --color-grey-text: hsl(225 7% 32%);
+  --color-grey-graphic: hsl(144 3% 65%);
+  --color-grey-light: hsl(144 3% 80%);
+  --color-grey-bg: hsl(132 8% 92%);
+  --color-bg: hsl(132 8% 98%);
+  --color-card-bg: white;
+  --color-white: white;
+
+  --color-red: hsl(0 100% 60%);
+  --color-red-bg: hsl(0 49% 90%);
+  --color-red-text: hsl(0 67% 44%);
+  --color-red-graphic: hsl(0 100% 40%);
+
+  --color-orange: hsl(30 100% 50%);
+  --color-orange-bg: hsl(30 65% 87%);
+  --color-orange-text: hsl(30 100% 30%);
+  --color-orange-graphic: hsl(30 100% 45%);
+
+  --color-yellow: hsl(50 100% 46%);
+  --color-yellow-bg: hsl(50 75% 85%);
+  --color-yellow-text: hsl(50 100% 24%);
+  --color-yellow-graphic: hsl(45 80% 40%);
+
+  --color-green: hsl(150 100% 25%);
+  --color-green-bg: hsl(150 35% 90%);
+  --color-green-text: hsl(150 100% 20%);
+  --color-green-graphic: hsl(150 100% 25%);
+
+  --color-blue: hsl(220 100% 50%);
+  --color-blue-bg: hsl(220 80% 92%);
+  --color-blue-text: hsl(220 100% 30%);
+  --color-blue-graphic: hsl(220 100% 50%);
+
+  --color-purple: hsl(280 100% 40%);
+  --color-purple-bg: hsl(280 100% 94%);
+  --color-purple-text: hsl(280 50% 40%);
+  --color-purple-graphic: hsl(280 100% 40%);
+
+  --color-pink: hsl(320 100% 70%);
+  --color-pink-bg: hsl(320 100% 93%);
+  --color-pink-text: hsl(320 70% 40%);
+  --color-pink-graphic: hsl(320 70% 40%);
+
+  --color-semi-transparent: hsl(0 0% 100% / 35%);
+  --rgb-app-nav: 255 255 255;
+  --hsl-app-nav: 280 0% 98%;
+
+  --shadow-color: 277deg 0% 60%;
+
+  --color-dialog-bg: var(--color-card-bg);
+  --color-input-bg: var(--color-card-bg);
+  --card-border-color: var(--color-grey-bg);
+  --popover-border-color: transparent;
+}
+
+:where(:root) {
+  /* Font weight design tokens */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  /* Font size design tokens */
+  --font-size-xxxxxl: 4rem;
+  --font-size-xxxxl: 3rem;
+  --font-size-xxxl: 2.5rem;
+  --font-size-xxl: 2rem;
+  --font-size-xl: 1.5rem;
+  --font-size-lg: 1.25rem;
+  --font-size-md: 1rem;
+  --font-size-sm: 0.875rem;
+  --font-size-xs: 0.75rem;
+  --font-size-xxs: 0.6875rem;
+  --font-size-xxxs: 0.625rem;
+
+  /* Size design tokens - only used by Skeleton and Spacer components */
+  --size-xxxxl: 12rem; /* 192px */
+  --size-xxxl: 8rem; /* 128px */
+  --size-xxl: 4rem; /* 64px */
+  --size-xl: 2.5rem; /* 40px */
+  --size-lg: 1.5rem; /* 24px */
+  --size-md: 1.25rem; /* 20px */
+  --size-sm: 1rem; /* 16px */
+  --size-xs: 0.75rem; /* 12px */
+  --size-xxs: 0.5rem; /* 8px */
+  --size-xxxs: 0.25rem; /* 4px */
+
+  /* Border radius design tokens */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-xxl: 24px;
+  --radius-full: 999px;
+
+  /* Utility design tokens */
+  --focus-color: var(--color-black);
+  --color-transparent: transparent;
+
+  /* Shadow design tokens */
+  --shadow: 4px 4px 16px rgba(0 0 0 / 0.16);
+  --shadow-1:
+    0.3px 0.3px 0.6px hsl(var(--shadow-color) / 0),
+    1.3px 1.3px 2.8px hsl(var(--shadow-color) / 0.52);
+  --shadow-2:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.18),
+    0.9px 1.7px 2.4px -0.5px hsl(var(--shadow-color) / 0.22),
+    1.9px 3.9px 5.4px -1.1px hsl(var(--shadow-color) / 0.27),
+    4.4px 8.8px 12.3px -1.6px hsl(var(--shadow-color) / 0.31);
+  --shadow-3:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.19),
+    1.6px 3.3px 4.6px -0.3px hsl(var(--shadow-color) / 0.22),
+    3px 6px 8.4px -0.5px hsl(var(--shadow-color) / 0.24),
+    4.9px 9.8px 13.7px -0.8px hsl(var(--shadow-color) / 0.27),
+    7.8px 15.6px 21.8px -1.1px hsl(var(--shadow-color) / 0.3);
+
+  /* Transition duration design tokens */
+  --duration-xs: 0.1s;
+  --duration-sm: 0.2s;
+  --duration-md: 0.35s;
+  --duration-lg: 0.65s;
+  --duration-xl: 1.35s;
+  --duration-xxl: 2s;
+  --cubic-bezier: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+  @media (prefers-reduced-motion: reduce) {
+    --duration-xs: 0s;
+    --duration-sm: 0s;
+    --duration-md: 0s;
+    --duration-lg: 0s;
+    --duration-xl: 0s;
+    --duration-xxl: 0s;
+  }
+}
+
+/* CSS Reset */
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+:where(html) {
+  color-scheme: var(--color-scheme, dark light);
+  accent-color: var(--color-accent, inherit);
+  scrollbar-gutter: stable;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  text-size-adjust: none;
+
+  /* A11Y: prevent obscured content when using the keyboard to shift focus */
+  scroll-padding-block: 1rem;
+
+  @media (min-width: 360px) and (min-height: 360px) {
+    scroll-padding-block: 2rem;
+  }
+}
+
+:where(body) {
+  margin: 0;
+  min-height: 100svh;
+  background-color: var(--color-bg);
+  font-family: var(--font-family, system-ui, sans-serif);
+  line-height: var(--line-height, 1.5);
+  overflow-wrap: break-word;
+  color: var(--color-text);
+}
+
+:where(img) {
+  word-break: break-all;
+  font-style: italic;
+  font-size: var(--font-size-xs);
+}
+
+:where(img, video, picture) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+:where(svg) {
+  max-width: 100%;
+  object-fit: cover;
+}
+
+:where(figure) {
+  margin: 0;
+}
+
+/* Typography */
+
+:where(button) {
+  font: inherit;
+  color: inherit;
+  font-weight: var(--font-weight-medium);
+  padding-block: 0;
+
+  &:focus-visible {
+    outline: 2px solid var(--focus-color);
+  }
+}
+
+:where(a) {
+  color: currentColor;
+  outline-offset: 2px;
+  text-underline-offset: 0.25em;
+
+  &:focus-visible {
+    text-decoration: none;
+    outline: 2px solid var(--focus-color);
+  }
+}
+
+:where(h1) {
+  margin-block-start: 0;
+}
+
+:where(h1, h2, h3, h4, h5, h6, button, input, label, .label, legend) {
+  line-height: var(--line-height-heading, 1.25);
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+  text-wrap: balance;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+:where(p) {
+  text-wrap: pretty;
+  white-space: pre-line;
+}
+
+:where(.bold, b, strong) {
+  font-weight: var(--font-weight-bold);
+}
+
+:where(blockquote) {
+  margin: 0;
+  border-inline-start: 3px solid var(--color-grey-light);
+  padding-inline-start: 1.35em;
+
+  p {
+    &:first-child {
+      quotes: '“' '”';
+      hanging-punctuation: first last;
+
+      &::before {
+        content: open-quote;
+      }
+
+      &::after {
+        content: close-quote;
+      }
+    }
+  }
+
+  > p {
+    margin-block-start: 0;
+    font-style: italic;
+    text-wrap: balance;
+  }
+}
+
+/* Lists */
+
+:where(dl) {
+  margin-block: 0;
+}
+
+:where(dd) {
+  margin-inline-start: 0;
+}
+
+:where(ol) {
+  list-style-position: outside;
+  padding-inline-start: 1.5rem;
+
+  li > p {
+    margin-block: 0rem 0.35rem;
+  }
+}
+
+:where(ul) {
+  list-style-position: outside;
+  padding-inline-start: 1.5rem;
+
+  li > p {
+    margin-block: 0rem 0.35rem;
+  }
+}
+
+:where(ul[role='list'], ol[role='list']) {
+  list-style: none;
+  padding-inline-start: 0;
+  margin-block: 0;
+}
+
+:where(ul) > li::marker {
+  color: inherit;
+}
+
+:where(ol) > li::marker {
+  color: var(--color-accent-graphic);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Code block */
+
+:where(code) {
+  color: var(--color-text);
+  font-weight: var(--font-weight-regular);
+  background-color: var(--color-grey-bg);
+  padding-inline: 0.25em;
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+:where(pre) {
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+:where(pre code) {
+  border-radius: var(--radius-md);
+  display: inline-block;
+  padding: 0.75rem 1rem;
+}
+
+/* Address block */
+
+:where(address) {
+  display: inline;
+  font-style: normal;
+  white-space: pre-line;
+}
+
+/* Keyboard key block */
+
+:where(kbd) {
+  background-color: var(--color-white);
+  border-radius: var(--radius-sm);
+  padding-inline: 0.35rem;
+  padding-block: 0.1rem 0.15rem;
+  border: 1px solid var(--color-grey-light);
+  box-shadow: inset 0 -2px 0 var(--color-grey-light);
+
+  &:has(.iconify) {
+    padding-block: 0.2rem 0.05rem;
+  }
+}
+
+/* A11Y helper class */
+
+.visuallyhidden {
+  position: fixed;
+  z-index: -1;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
