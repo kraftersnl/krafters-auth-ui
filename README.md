@@ -19,9 +19,51 @@ This layer does **not** stand on its own. Extend it alongside its two dependenci
 
 Every rule in this layer styles with Krafters UI token _names_ — the colors, font sizes and radii Krafters UI documents:
 
-`--color-text` · `--color-grey-text` · `--color-card-bg` · `--color-white` · `--color-red-text` · `--color-red-bg` · `--color-green-graphic` · `--font-size-sm|md|lg|xl|xxl|xxxl` · `--font-weight-bold` · `--radius-sm|md`
+`--color-text` · `--color-grey-text` · `--color-grey-light` · `--color-card-bg` · `--color-white` · `--color-red-text` · `--color-red-bg` · `--color-green-graphic` · `--font-size-xs|sm|md|lg|xxl|xxxl` · `--font-weight-bold` · `--radius-sm|md`
 
 Krafters UI defines default values for these in its `app/assets/main.css`, but that file is a template rather than an auto-loaded stylesheet — each app keeps its own palette under those names, exactly as it already does for Krafters UI components. If your app renders Krafters UI correctly, this layer inherits the same theming, dark mode included, with no extra CSS.
+
+### Divider color
+
+The dividers in `LoginForm` and the MFA dialogs are drawn as a 1px background-colored line, so they don't depend on how your app resets `<hr>`. Their color is `--auth-color-divider`, which falls back to `--color-grey-light`:
+
+```css
+:root {
+  --auth-color-divider: var(--color-grey-bg);
+}
+```
+
+### Font sizes
+
+Apps don't agree on what a font size token _name_ means: one app's `--font-size-sm` is `0.875rem`, another's is `1.125rem`. So the layer never asks for a size by name directly. Each piece of text reads a role token, which falls back to the Krafters UI scale when the app leaves it unset:
+
+| Token                                  | Default            | Used for                                                          |
+| -------------------------------------- | ------------------ | ----------------------------------------------------------------- |
+| `--auth-font-size-heading`             | `--font-size-xxl`  | Sign-in challenge title                                           |
+| `--auth-font-size-intro`               | `--font-size-lg`   | Sign-in challenge intro text                                      |
+| `--auth-font-size-label`               | `--font-size-md`   | Code input labels, QR code and recovery codes headings            |
+| `--auth-font-size-small`               | `--font-size-sm`   | Helper and validation text, QR code description, footer links     |
+| `--auth-font-size-error`               | `--font-size-xs`   | `.auth-error`                                                     |
+| `--auth-font-size-otp-input`           | `--font-size-xxxl` | One-time code input digits                                        |
+| `--auth-font-size-recovery-code-input` | `--font-size-lg`   | Recovery code input on the sign-in challenge                      |
+| `--auth-font-size-recovery-code-list`  | `--font-size-sm`   | List of recovery codes                                            |
+| `--auth-font-size-button`              | `--font-size-md`   | Submit buttons on the login form and sign-in challenge            |
+| `--auth-font-size-dialog-button`       | `--font-size-sm`   | Action buttons in the MFA dialogs, the copy recovery codes button |
+
+If your app uses the Krafters UI scale, set nothing. If your scale is shifted, map the roles that come out wrong:
+
+```css
+:root {
+  --auth-font-size-heading: var(--font-size-xl);
+  --auth-font-size-small: var(--font-size-xs);
+}
+```
+
+The fallbacks are resolved on the element itself, not on `:root`, so redefining `--font-size-*` for part of a page still reaches the layer. You can also set a role token on a single container, such as `.login-page`, to change only that page.
+
+The recovery code list shows two columns when two codes fit side by side and one column otherwise, so a code never breaks across lines at any font size.
+
+The two button tokens reach a Krafters UI `Button` through its `--font-size` property. So `--auth-font-size-button` also applies to a `Button` you pass into the `submit` slot of `LoginForm`; give that `Button` its own `font-size` prop to opt out. A button component of your own doesn't read `--font-size`, so map the token to whatever property it does read.
 
 ### Overriding styles
 

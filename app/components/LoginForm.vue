@@ -177,7 +177,6 @@ defineExpose({ submitting, error });
         :loading="submitting"
         variant="green"
         size="xl"
-        font-size="md"
         :label="$t('general.sign-in')"
       />
     </slot>
@@ -194,6 +193,11 @@ defineExpose({ submitting, error });
 
 <style>
 .login-form {
+  > hr {
+    block-size: 1px;
+    background-color: var(--auth-color-divider, var(--color-grey-light));
+  }
+
   .auth-error {
     margin-block-start: 0rem;
     max-width: none;
@@ -215,6 +219,7 @@ defineExpose({ submitting, error });
 
   .button {
     &[type='submit'] {
+      --font-size: var(--auth-font-size-button, var(--font-size-md));
       margin-block-start: 0.25rem;
       flex-basis: 100%;
     }

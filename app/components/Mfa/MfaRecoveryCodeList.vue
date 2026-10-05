@@ -26,15 +26,22 @@ const { recoveryCodes } = useMfa();
 
   ul {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 1.5rem;
+    /*
+     * Fortify recovery codes are always 21 characters, so in this monospace
+     * font 21ch is exactly one code: two columns when two codes fit side by
+     * side, one otherwise, and never a code broken across lines.
+     */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 21ch), 1fr));
+    column-gap: 1rem;
     text-align: center;
+    white-space: nowrap;
     font-family: monospace;
-    font-size: var(--font-size-sm);
+    font-size: var(--auth-font-size-recovery-code-list, var(--font-size-sm));
     color: var(--color-grey-text);
   }
 
   .copy-button {
+    --font-size: var(--auth-font-size-dialog-button, var(--font-size-sm));
     margin-block-start: 1rem;
   }
 }

@@ -36,12 +36,12 @@ onMounted(() => getQrCode());
 
   .qr-code-description {
     h2 {
-      font-size: var(--font-size-md);
+      font-size: var(--auth-font-size-label, var(--font-size-md));
       margin-block-end: 0.5rem;
     }
 
     p {
-      font-size: var(--font-size-sm);
+      font-size: var(--auth-font-size-small, var(--font-size-sm));
       margin-block: 0;
       text-wrap: balance;
     }

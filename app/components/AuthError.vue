@@ -43,7 +43,7 @@ defineProps<{
 
   p,
   ul {
-    font-size: var(--font-size-xs);
+    font-size: var(--auth-font-size-error, var(--font-size-xs));
     margin-block: 0;
   }
 }

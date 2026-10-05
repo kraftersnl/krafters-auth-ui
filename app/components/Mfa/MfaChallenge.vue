@@ -66,7 +66,6 @@ async function toggleUseRecoveryCode() {
           type="submit"
           :label="$t('general.sign-in')"
           size="xl"
-          font-size="md"
           variant="green"
           icon-pos="end"
           icon="material-symbols:arrow-forward-rounded"
@@ -107,7 +106,7 @@ async function toggleUseRecoveryCode() {
 
   .mfa-header {
     h1 {
-      font-size: var(--font-size-xxl);
+      font-size: var(--auth-font-size-heading, var(--font-size-xxl));
       font-weight: var(--font-weight-bold);
       margin-block-end: 0rem;
     }
@@ -115,7 +114,7 @@ async function toggleUseRecoveryCode() {
     p {
       max-width: none;
       margin-block-end: 2.5rem;
-      font-size: var(--font-size-lg);
+      font-size: var(--auth-font-size-intro, var(--font-size-lg));
       color: var(--color-grey-text);
     }
   }
@@ -126,6 +125,7 @@ async function toggleUseRecoveryCode() {
   }
 
   button[type='submit'] {
+    --font-size: var(--auth-font-size-button, var(--font-size-md));
     max-width: 280px;
     margin-inline: auto;
   }
@@ -133,12 +133,12 @@ async function toggleUseRecoveryCode() {
   .auth-error {
     p,
     ul {
-      font-size: var(--font-size-sm);
+      font-size: var(--auth-font-size-small, var(--font-size-sm));
     }
   }
 
   .mfa-footer {
-    font-size: var(--font-size-sm);
+    font-size: var(--auth-font-size-small, var(--font-size-sm));
 
     > span {
       color: var(--color-grey-text);

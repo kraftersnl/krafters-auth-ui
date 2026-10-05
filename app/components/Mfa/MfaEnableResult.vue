@@ -16,5 +16,9 @@ const { recoveryCodes, mfaError } = useMfa();
 <style>
 .mfa-enable-result-content {
   display: grid;
+
+  h2 {
+    font-size: var(--auth-font-size-label, var(--font-size-md));
+  }
 }
 </style>

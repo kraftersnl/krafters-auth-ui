@@ -42,11 +42,17 @@ const {
   max-width: 490px;
 
   .mfa-recovery-codes-divider {
+    block-size: 1px;
+    background-color: var(--auth-color-divider, var(--color-grey-light));
     margin-block-start: 1.5rem;
   }
 
   .dialog-buttons {
     margin-block-start: 1.5rem;
+
+    .button {
+      --font-size: var(--auth-font-size-dialog-button, var(--font-size-sm));
+    }
   }
 
   p {

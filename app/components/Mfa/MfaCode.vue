@@ -40,7 +40,7 @@ const { mfaCredentials, mfaError, codeInputRef } = useMfa();
   label {
     text-align: center;
     margin-inline: auto;
-    font-size: var(--font-size-md);
+    font-size: var(--auth-font-size-label, var(--font-size-md));
     margin-block-end: 0.5rem;
     color: var(--color-text);
   }
@@ -50,7 +50,7 @@ const { mfaCredentials, mfaError, codeInputRef } = useMfa();
     letter-spacing: 1rem;
     padding-inline: 1rem;
     padding-block: 0.5rem;
-    font-size: var(--font-size-xxxl);
+    font-size: var(--auth-font-size-otp-input, var(--font-size-xxxl));
     background-color: var(--color-card-bg);
     font-variant-numeric: tabular-nums;
   }
@@ -60,7 +60,7 @@ const { mfaCredentials, mfaError, codeInputRef } = useMfa();
     margin-block: 0.25rem 0.75rem;
 
     .error {
-      font-size: var(--font-size-sm);
+      font-size: var(--auth-font-size-small, var(--font-size-sm));
     }
   }
 }

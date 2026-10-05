@@ -131,6 +131,8 @@ const emit = defineEmits<{
   max-width: 490px;
 
   .mfa-dialog-divider {
+    block-size: 1px;
+    background-color: var(--auth-color-divider, var(--color-grey-light));
     margin-block-start: 1.5rem;
   }
 
@@ -150,6 +152,10 @@ const emit = defineEmits<{
 
   .dialog-buttons {
     margin-block-start: 1.5rem;
+
+    .button {
+      --font-size: var(--auth-font-size-dialog-button, var(--font-size-sm));
+    }
   }
 
   .mfa-content {

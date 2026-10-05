@@ -6,6 +6,10 @@ useHead({ titleTemplate: '%s | Krafters Auth UI' });
   <div class="app">
     <NuxtRouteAnnouncer />
 
+    <header class="app-header">
+      <ThemeSwitch />
+    </header>
+
     <main id="main" tabindex="-1">
       <NuxtPage />
     </main>
@@ -20,6 +24,15 @@ useHead({ titleTemplate: '%s | Krafters Auth UI' });
   --font-weight-bold: 600;
   --line-height: 1.5;
   --line-height-heading: 1.2;
+}
+
+.app-header {
+  display: flex;
+  justify-content: flex-end;
+  padding-inline: 1.5rem;
+  padding-block-start: 1rem;
+  max-width: 1024px;
+  margin-inline: auto;
 }
 
 main {
