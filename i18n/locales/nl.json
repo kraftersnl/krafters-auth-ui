@@ -23,6 +23,22 @@
     "recovery-codes-generate": "Genereer nieuwe codes",
     "recovery-codes-show": "Herstelcodes tonen",
     "use-code": "Gebruik een verificatiecode",
-    "use-recovery-code": "Gebruik een herstelcode"
+    "use-recovery-code": "Gebruik een herstelcode",
+    "setup-title": "Beveilig je account",
+    "setup-description": "Voeg een tweede stap toe aan het inloggen, zodat niemand met alleen je wachtwoord in je account komt.",
+    "setup-finish": "Ik heb mijn herstelcodes bewaard",
+    "skip": "Later instellen",
+    "status-on": "Multi-factor authenticatie staat aan.",
+    "status-off": "Multi-factor authenticatie staat uit.",
+    "setup-required-description": "Multi-factor authenticatie is verplicht voor je account. Stel het in om verder te gaan.",
+    "organization-required": "Multi-factor authenticatie verplichten",
+    "organization-required-description": "Iedereen in je organisatie moet multi-factor authenticatie instellen voordat ze het platform kunnen gebruiken. Voor managers is het altijd verplicht.",
+    "organization-required-on": "Multi-factor authenticatie is nu verplicht voor je organisatie.",
+    "organization-required-off": "Multi-factor authenticatie is niet langer verplicht voor je organisatie.",
+    "change-app-description": "Om over te stappen op een nieuwe authenticatie-app of telefoon wordt multi-factor authenticatie uitgeschakeld en stel je het meteen opnieuw in. Tot die tijd kun je alleen de instelpagina gebruiken."
+  },
+  "password-confirmation": {
+    "title": "Bevestig je wachtwoord",
+    "description": "Vul voor je veiligheid je wachtwoord in voordat je je instellingen voor multi-factor authenticatie wijzigt."
   }
 }

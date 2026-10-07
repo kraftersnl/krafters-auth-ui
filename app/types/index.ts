@@ -47,8 +47,9 @@ declare global {
   };
 
   /**
-   * Step the MFA dialog is showing. Consumers do not set this directly —
-   * use `useMfaDialog()` to open the dialog in the right flow.
+   * Step the MFA flow is showing. Consumers do not set this directly —
+   * use `useMfaDialog()` to open the dialog in the right flow, or render
+   * `MfaSetup`, which walks steps 1–4 inline.
    *
    * 1 enable intro          4 enabled + recovery codes
    * 2 scan QR code          5 disable confirmation

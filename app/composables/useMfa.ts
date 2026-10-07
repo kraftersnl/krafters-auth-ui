@@ -7,6 +7,7 @@
  */
 export function useMfa() {
   const { client, refreshIdentity, loginRedirectTarget } = useAuth();
+  const { withPasswordConfirmation } = usePasswordConfirmation();
 
   const mfaStep = useState<MfaStep>('mfaStep', () => 1);
   const qrCode = useState('qrCode', () => '');
@@ -44,7 +45,20 @@ export function useMfa() {
   );
 
   function setMfaError(error: unknown) {
+    // A password confirmation the user closed is their choice, not an error.
+    if (isPasswordConfirmationRequired(error)) return;
     mfaError.value = extractAuthError(error);
+  }
+
+  /**
+   * Fortify's two-factor settings routes sit behind `password.confirm` when the
+   * app turns `confirmPassword` on; ask for the password when they say so.
+   */
+  function settingsRequest<T>(
+    url: string,
+    options?: Parameters<typeof client>[1],
+  ): Promise<T> {
+    return withPasswordConfirmation(() => client<T>(url, options));
   }
 
   function resetMfa() {
@@ -63,7 +77,7 @@ export function useMfa() {
     mfaError.value = null;
 
     try {
-      const codes = await client<string[]>(
+      const codes = await settingsRequest<string[]>(
         '/api/user/two-factor-recovery-codes',
       );
       if (codes?.length) recoveryCodes.value = codes;
@@ -77,7 +91,7 @@ export function useMfa() {
     loadingGenerateRecoveryCodes.value = true;
 
     try {
-      await client('/api/user/two-factor-recovery-codes', {
+      await settingsRequest('/api/user/two-factor-recovery-codes', {
         method: 'POST',
       });
       await getRecoveryCodes();
@@ -92,7 +106,7 @@ export function useMfa() {
     mfaError.value = null;
 
     try {
-      await client('/api/user/two-factor-authentication', {
+      await settingsRequest('/api/user/two-factor-authentication', {
         method: 'POST',
       });
       mfaStep.value = 2;
@@ -106,7 +120,7 @@ export function useMfa() {
     mfaError.value = null;
 
     try {
-      await client('/api/user/two-factor-authentication', {
+      await settingsRequest('/api/user/two-factor-authentication', {
         method: 'DELETE',
       });
       mfaStep.value = 6;
@@ -122,7 +136,7 @@ export function useMfa() {
     mfaError.value = null;
 
     try {
-      const data = await client<{ svg?: string }>(
+      const data = await settingsRequest<{ svg?: string }>(
         '/api/user/two-factor-qr-code',
       );
       if (data?.svg) qrCode.value = data.svg;
@@ -136,11 +150,17 @@ export function useMfa() {
     loadingConfirmationCode.value = true;
 
     try {
-      await client('/api/user/confirmed-two-factor-authentication', {
+      // Fetched before confirming, shown after: Fortify creates the codes when
+      // MFA is enabled and confirming keeps them. A backend may end a
+      // confirmation that only covered setting MFA up (one that came from
+      // signing in) once it is confirmed, and the codes still belong to this
+      // enrolment.
+      await getRecoveryCodes();
+
+      await settingsRequest('/api/user/confirmed-two-factor-authentication', {
         method: 'POST',
         body: mfaCredentials.value,
       });
-      await getRecoveryCodes();
       mfaStep.value = 4;
       return true;
     } catch (error) {
