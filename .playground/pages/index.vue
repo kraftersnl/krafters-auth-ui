@@ -6,6 +6,8 @@ const {
   openMfaDisableDialog,
   openMfaRecoveryCodesDialog,
 } = useMfaDialog();
+
+const { requestPasswordConfirmation } = usePasswordConfirmation();
 </script>
 
 <template>
@@ -42,6 +44,16 @@ const {
         label="Recovery codes"
         @click="openMfaRecoveryCodesDialog()"
       />
+
+      <Button
+        variant="outline"
+        size="lg"
+        icon="material-symbols:password-rounded"
+        label="Confirm password"
+        @click="requestPasswordConfirmation()"
+      />
+
+      <Button variant="link" size="lg" label="Inline setup" to="/setup" />
 
       <Button
         variant="link"

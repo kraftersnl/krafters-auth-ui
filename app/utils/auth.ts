@@ -17,3 +17,21 @@ export function extractAuthError(error: unknown): AuthErrorData | null {
     candidate?.response?._data ?? candidate?._data ?? candidate?.data ?? null
   );
 }
+
+/**
+ * Whether a request was refused for want of a fresh password confirmation:
+ * Laravel's `password.confirm` middleware answers 423 to a JSON request.
+ */
+export function isPasswordConfirmationRequired(error: unknown): boolean {
+  const candidate = error as {
+    status?: number;
+    statusCode?: number;
+    response?: { status?: number };
+  } | null;
+
+  return (
+    (candidate?.response?.status ??
+      candidate?.statusCode ??
+      candidate?.status) === 423
+  );
+}

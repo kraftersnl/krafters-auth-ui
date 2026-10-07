@@ -23,6 +23,22 @@
     "recovery-codes-generate": "Generate new codes",
     "recovery-codes-show": "Show recovery codes",
     "use-code": "Use a verification code",
-    "use-recovery-code": "Use a recovery code"
+    "use-recovery-code": "Use a recovery code",
+    "setup-title": "Secure your account",
+    "setup-description": "Add a second step to signing in, so nobody can get into your account with your password alone.",
+    "setup-finish": "I've stored my recovery codes",
+    "skip": "Skip for now",
+    "status-on": "Multi-factor authentication is enabled.",
+    "status-off": "Multi-factor authentication is not enabled.",
+    "setup-required-description": "Multi-factor authentication is required for your account. Set it up to continue.",
+    "organization-required": "Require multi-factor authentication",
+    "organization-required-description": "Everyone in your organization has to set up multi-factor authentication before they can use the platform. Managers always need it.",
+    "organization-required-on": "Multi-factor authentication is now required for your organization.",
+    "organization-required-off": "Multi-factor authentication is no longer required for your organization.",
+    "change-app-description": "To move to a new authenticator app or phone, multi-factor authentication is switched off and you set it up again straight away. Until then you can only use the setup page."
+  },
+  "password-confirmation": {
+    "title": "Confirm your password",
+    "description": "For your security, enter your password before you change your multi-factor authentication settings."
   }
 }

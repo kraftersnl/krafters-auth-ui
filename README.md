@@ -67,7 +67,7 @@ The two button tokens reach a Krafters UI `Button` through its `--font-size` pro
 
 ### Overriding styles
 
-The layer's own class names are stable hooks you can restyle from your app: `.login-form`, `.auth-error`, `.mfa-dialog`, `.mfa-challenge-wrapper`, `.mfa-code-input`, `.mfa-recovery-codes-card`.
+The layer's own class names are stable hooks you can restyle from your app: `.login-form`, `.auth-error`, `.mfa-dialog`, `.mfa-setup`, `.mfa-challenge-wrapper`, `.mfa-code-input`, `.mfa-recovery-codes-card`.
 
 `.auth-error` is deliberately _not_ your app's `.error-message`. Reusing that class would mean two global definitions of one selector resolving by source order, and your error component's CSS chunk is not necessarily loaded on the page a login form sits on. `.auth-error` is written purely in tokens, so it picks up your palette and dark mode; restyle it if your errors look different elsewhere:
 
@@ -254,6 +254,63 @@ const {
 
 Whether MFA is currently on stays your app's call — the flag lives in your `/api/user` response, and its name differs per backend, so the layer never guesses at it.
 
+### Setting up MFA on a page
+
+`MfaSetup` walks the same enable flow as `MfaDialog` — intro → QR code → confirm code → recovery codes — inline, for a page instead of a dialog: a prompt after sign-in, or a step in onboarding. Its step headings are `h2`, so give the page its own `h1`; `mfa.setup-title` and `mfa.setup-description` are there for it.
+
+```vue
+<template>
+  <h1>{{ $t('mfa.setup-title') }}</h1>
+  <p>{{ $t('mfa.setup-description') }}</p>
+
+  <MfaSetup
+    @refresh="refreshUser()"
+    @skip="navigateTo('/')"
+    @done="navigateTo('/')"
+  />
+</template>
+```
+
+| Prop        | Default |                                                                  |
+| ----------- | ------- | ---------------------------------------------------------------- |
+| `skippable` | `true`  | Offer "Skip for now" before MFA is on. Turn off to require setup |
+| `autofocus` | `false` | Focus the intro heading on mount                                 |
+
+| Event      |                                                                       |
+| ---------- | --------------------------------------------------------------------- |
+| `@skip`    | The user chose to set up MFA later                                    |
+| `@done`    | MFA is on and the user confirmed they stored the recovery codes       |
+| `@refresh` | MFA has actually been turned on — re-sync your app's copy of the user |
+
+The buttons are the `actions` slot, so an app can bring its own button component. Its scope carries everything the default buttons use: `step` (1–4), `skippable`, `canConfirm`, `loadingEnable`, `loadingConfirm`, `formId` (put `type="submit"` and `:form="formId"` on the confirm button of step 3), and the handlers `enable`, `next`, `back`, `skip` and `finish`.
+
+### Password confirmation
+
+With `confirmPassword` on in Fortify's `twoFactorAuthentication` feature (recommended, and Fortify's default), every two-factor settings route sits behind `password.confirm` and answers **423** until the user has re-entered their password. The layer handles that for you: mount `<PasswordConfirmationDialog />` once, in your layout (it names the account to password managers with a hidden `autocomplete="username"` field, the `email` of your user payload unless you pass `username`), and every MFA call asks for the password when Fortify does and then retries. `openMfaEnableDialog()` and `openMfaDisableDialog()` ask up front instead, so the password dialog never opens on top of the MFA dialog.
+
+The confirmation holds for your app's `auth.password_timeout`. For a sensitive change, keep that short: Laravel's default is three hours.
+
+For changes of your own behind `password.confirm`, use the same composable:
+
+```ts
+const { ensurePasswordConfirmed, withPasswordConfirmation } =
+  usePasswordConfirmation();
+
+// Ask up front, before opening a flow…
+if (!(await ensurePasswordConfirmed())) return;
+
+// …or only when the server answers 423, and retry once.
+await withPasswordConfirmation(() =>
+  client('/api/sensitive', { method: 'POST' }),
+);
+```
+
+`requestPasswordConfirmation(afterConfirm)` takes an optional function that runs once the password is accepted, before the dialog closes, with its Confirm button still loading. `openMfaRecoveryCodesDialog()` uses it to load the codes, so the user sees one action in progress from Confirm until the codes appear.
+
+### Changing the authenticator app
+
+Fortify has no "swap" for the second factor, and its undocumented `force` re-enable replaces the live secret and recovery codes before the new app is confirmed, which can lock the user out. The way to move to a new app or phone is Fortify's own: switch MFA off (behind the password confirmation above) and set it up again. An app that requires MFA should hold the session at its setup page until the new app is confirmed; `mfa.change-app-description` is there to explain that.
+
 ## API
 
 ### `useAuth()`
@@ -280,14 +337,15 @@ Every `useAuth().user` in your app is then typed against your own payload, with 
 
 ### `useMfaDialog()`
 
-|                                             |                                                                                       |
-| ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `openMfaEnableDialog()`                     | Opens `MfaDialog` on the enable flow: intro → QR code → confirm code → recovery codes |
-| `openMfaDisableDialog()`                    | Opens `MfaDialog` on the disable confirmation                                         |
-| `closeMfaDialog()`                          |                                                                                       |
-| `openMfaRecoveryCodesDialog()`              | Fetches the current recovery codes, then shows them                                   |
-| `closeMfaRecoveryCodesDialog()`             |                                                                                       |
-| `mfaDialogRef`, `mfaRecoveryCodesDialogRef` | The underlying `Dialog` refs, if you need them                                        |
+|                                             |                                                                                                                                                                          |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `openMfaEnableDialog()`                     | Opens `MfaDialog` on the enable flow: intro → QR code → confirm code → recovery codes                                                                                    |
+| `openMfaDisableDialog()`                    | Opens `MfaDialog` on the disable confirmation                                                                                                                            |
+| `closeMfaDialog()`                          |                                                                                                                                                                          |
+| `openMfaRecoveryCodesDialog()`              | Fetches the current recovery codes, then shows them                                                                                                                      |
+| `closeMfaRecoveryCodesDialog()`             |                                                                                                                                                                          |
+| `mfaDialogRef`, `mfaRecoveryCodesDialogRef` | The underlying `Dialog` refs, if you need them                                                                                                                           |
+| `loadingMfaRecoveryCodesDialog`             | Loading state for the button that opens the recovery codes. Only set while the codes load without a password prompt; with one, the prompt's Confirm button loads instead |
 
 ### `useMfa()`
 
@@ -297,21 +355,25 @@ Reach for it to build your own flow. For the standard one, `useMfaDialog()` plus
 
 ### Components
 
-| Component                                                             |                                                            |
-| --------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `LoginForm`                                                           | Email + password sign-in, aware of a pending second factor |
-| `MfaDialog`                                                           | The enable/disable flow, all six steps. Emits `refresh`    |
-| `MfaRecoveryCodesDialog`                                              | Shows and regenerates recovery codes                       |
-| `MfaChallenge`                                                        | The second-factor form used by the challenge page          |
-| `MfaCode`, `MfaRecoveryCode`                                          | The two inputs, with their validation and error region     |
-| `MfaQr`, `MfaEnableResult`, `MfaDisableResult`, `MfaRecoveryCodeList` | Steps of the flow, reusable on their own                   |
-| `AuthError`                                                           | Renders a Fortify error or validation payload              |
+| Component                                                             |                                                              |
+| --------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `LoginForm`                                                           | Email + password sign-in, aware of a pending second factor   |
+| `MfaDialog`                                                           | The enable/disable flow, all six steps. Emits `refresh`      |
+| `MfaSetup`                                                            | The enable flow inline on a page, with an optional skip      |
+| `MfaRecoveryCodesDialog`                                              | Shows and regenerates recovery codes                         |
+| `MfaChallenge`                                                        | The second-factor form used by the challenge page            |
+| `MfaCode`, `MfaRecoveryCode`                                          | The two inputs, with their validation and error region       |
+| `MfaQr`, `MfaEnableResult`, `MfaDisableResult`, `MfaRecoveryCodeList` | Steps of the flow, reusable on their own                     |
+| `AuthError`                                                           | Renders a Fortify error or validation payload                |
+| `PasswordConfirmationDialog`                                          | Asks for the password when Fortify's `password.confirm` does |
 
 ## Translations
 
-English and Dutch ship in `i18n/locales`, under the `mfa` namespace. `@nuxtjs/i18n` deep-merges the messages of every layer, so these arrive alongside your app's own namespaces without any configuration. Override a single string by declaring the same key in your app's locale file — the app's message wins.
+English and Dutch ship in `i18n/locales`, under the `mfa` and `password-confirmation` namespaces. `@nuxtjs/i18n` deep-merges the messages of every layer, so these arrive alongside your app's own namespaces without any configuration. Override a single string by declaring the same key in your app's locale file — the app's message wins.
 
-The layer also uses `general.continue`, `general.confirm`, `general.done`, `general.sign-in`, `general.email`, `password.heading` and `password.show` from Krafters UI. The login _page_ strings — headings, descriptions, forgot-password copy — stay with your app, since only the form lives here.
+The `mfa` namespace also holds the strings an app needs around these components — `mfa.setup-title` and `mfa.setup-description` for a setup page (`mfa.setup-required-description` when the user cannot skip it), `mfa.status-on`, `mfa.status-off` and `mfa.change-app-description` for an account settings page, `mfa.organization-required*` for an organization setting that requires MFA of every member — so every MFA string lives in one place.
+
+The layer also uses `general.back`, `general.continue`, `general.confirm`, `general.done`, `general.sign-in`, `general.email`, `password.heading` and `password.show` from Krafters UI. The login _page_ strings — headings, descriptions, forgot-password copy — stay with your app, since only the form lives here.
 
 Fortify returns its own validation messages untranslated; `AuthError` marks that region `lang="en"` so screen readers announce it in the right voice (WCAG 3.1.2).
 

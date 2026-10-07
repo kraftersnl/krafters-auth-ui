@@ -13,6 +13,8 @@ useHead({ titleTemplate: '%s | Krafters Auth UI' });
     <main id="main" tabindex="-1">
       <NuxtPage />
     </main>
+
+    <PasswordConfirmationDialog />
   </div>
 </template>
 
