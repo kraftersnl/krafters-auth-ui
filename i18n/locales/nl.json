@@ -24,6 +24,7 @@
     "recovery-codes-show": "Herstelcodes tonen",
     "use-code": "Gebruik een verificatiecode",
     "use-recovery-code": "Gebruik een herstelcode",
+    "reset": "MFA opnieuw instellen",
     "setup-title": "Beveilig je account",
     "setup-description": "Voeg een tweede stap toe aan het inloggen, zodat niemand met alleen je wachtwoord in je account komt.",
     "setup-finish": "Ik heb mijn herstelcodes bewaard",
