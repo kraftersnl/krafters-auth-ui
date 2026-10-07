@@ -1,4 +1,4 @@
-import { defineNuxtModule, createResolver } from '@nuxt/kit';
+import { defineNuxtModule, createResolver } from 'nuxt/kit';
 
 /**
  * Registers the layer's ambient global types (`app/types/index.ts`) as a
