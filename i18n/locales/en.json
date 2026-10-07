@@ -24,6 +24,7 @@
     "recovery-codes-show": "Show recovery codes",
     "use-code": "Use a verification code",
     "use-recovery-code": "Use a recovery code",
+    "reset": "Set up MFA again",
     "setup-title": "Secure your account",
     "setup-description": "Add a second step to signing in, so nobody can get into your account with your password alone.",
     "setup-finish": "I've stored my recovery codes",
