@@ -125,6 +125,7 @@ onMounted(() => getQrCode());
       .button {
         justify-content: center;
         inline-size: 100%;
+        padding-inline: 0.25rem;
 
         .button-text {
           padding-block: 0.5rem;
