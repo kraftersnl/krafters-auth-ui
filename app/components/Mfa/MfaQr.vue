@@ -39,7 +39,7 @@ onMounted(() => getQrCode());
     <component :is="isHandheld ? 'details' : 'div'" class="mfa-qr-code-section">
       <summary v-if="isHandheld" class="mfa-qr-toggle">
         {{ $t('mfa.qr-toggle') }}
-        <Icon name="material-symbols:expand-more-rounded" />
+        <Icon name="material-symbols:expand-more-rounded" mode="svg" />
       </summary>
 
       <div class="mfa-qr-code-wrapper">
@@ -65,7 +65,7 @@ onMounted(() => getQrCode());
     <details v-if="!isHandheld" class="mfa-setup-key-details">
       <summary class="mfa-qr-toggle">
         {{ $t('mfa.setup-key-toggle') }}
-        <Icon name="material-symbols:expand-more-rounded" />
+        <Icon name="material-symbols:expand-more-rounded" mode="svg" />
       </summary>
 
       <MfaSetupKey />
@@ -93,6 +93,8 @@ onMounted(() => getQrCode());
       display: none;
     }
 
+    /* An SVG chevron (mode="svg"): the default mask-based icon is redrawn as
+       a flat image while it turns, which leaves a faint box around it. */
     .iconify {
       flex-shrink: 0;
       font-size: 1.25em;

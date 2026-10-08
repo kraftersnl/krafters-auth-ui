@@ -259,7 +259,7 @@ Whether MFA is currently on stays your app's call — the flag lives in your `/a
 
 ### Setting up MFA on a page
 
-`MfaSetup` walks the same enable flow as `MfaDialog` — intro → QR code → confirm code → recovery codes — inline, for a page instead of a dialog: a prompt after sign-in, or a step in onboarding. Its step headings are `h2`, so give the page its own `h1`; `mfa.setup-title` and `mfa.setup-description` are there for it.
+`MfaSetup` walks the same enable flow as `MfaDialog` — intro → QR code → confirm code → recovery codes — inline, for a page instead of a dialog: a prompt after sign-in, or a step in onboarding. Its step headings are `h2`, so give the page its own `h1`; `mfa.setup-title` and `mfa.setup-description` are there for it. To free up the room once the flow is underway, drop that title and pass `:heading-level="1"`: the step heading becomes the page's `h1`, in the app's own `h1` style, and the headings inside the steps move up with it. When the page's own title and description already introduce MFA, pass `:show-intro="false"` so the intro step does not repeat it with a heading and description of its own.
 
 ```vue
 <template>

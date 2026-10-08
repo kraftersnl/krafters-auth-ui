@@ -4,14 +4,30 @@
  * for a page rather than a dialog: a setup prompt after sign-in, an onboarding
  * step. `MfaDialog` keeps covering the same flow for account settings.
  *
- * Step headings are `h2`, so render it below the page's own `h1`. The buttons
- * are a slot, so an app can bring its own button component.
+ * Step headings are `h2` by default, so render it below the page's own `h1`,
+ * or make them the page's `h1` with `headingLevel`. The buttons are a slot, so
+ * an app can bring its own button component.
  */
-const { skippable = true, autofocus = false } = defineProps<{
+const {
+  skippable = true,
+  autofocus = false,
+  headingLevel = 2,
+  showIntro = true,
+} = defineProps<{
   /** Offer a way out of the flow before MFA is on. */
   skippable?: boolean;
   /** Focus the intro heading on mount. Leave off when the page moves focus itself. */
   autofocus?: boolean;
+  /**
+   * Level of the step heading. 1 makes it the page's title, for a page that
+   * drops its own once the flow is underway; the headings inside follow.
+   */
+  headingLevel?: 1 | 2;
+  /**
+   * Show the intro step's heading and description. Leave off when the page
+   * already introduces MFA in its own words, so it is not said twice.
+   */
+  showIntro?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -39,6 +55,9 @@ const {
 
 const formId = useId();
 const headingRef = useTemplateRef<HTMLHeadingElement>('heading');
+
+/** Headings inside a step sit one level below the step heading. */
+const subheadingLevel = computed(() => (headingLevel + 1) as 2 | 3);
 const loadingEnable = ref(false);
 
 const heading = computed(() => {
@@ -93,12 +112,24 @@ onMounted(() => {
 
 <template>
   <div class="mfa-setup">
-    <h2 ref="heading" tabindex="-1">
+    <component
+      :is="`h${headingLevel}`"
+      v-if="showIntro || mfaStep !== 1"
+      ref="heading"
+      tabindex="-1"
+    >
       {{ heading }}
-    </h2>
+    </component>
 
-    <div v-if="mfaStep === 1" class="mfa-setup-intro">
-      <p>{{ $t('mfa.description') }}</p>
+    <!-- Without the intro text it only holds an error, so it only renders
+         with one: an empty block would still take up room in the layout. -->
+    <div
+      v-if="mfaStep === 1 && (showIntro || mfaError)"
+      class="mfa-setup-intro"
+    >
+      <p v-if="showIntro" class="mfa-setup-description">
+        {{ $t('mfa.description') }}
+      </p>
 
       <AuthError :data="mfaError" />
     </div>
@@ -115,7 +146,10 @@ onMounted(() => {
       <MfaCode />
     </Form>
 
-    <MfaEnableResult v-else-if="mfaStep === 4" :heading-level="3" />
+    <MfaEnableResult
+      v-else-if="mfaStep === 4"
+      :heading-level="subheadingLevel"
+    />
 
     <div class="mfa-setup-actions">
       <slot
@@ -193,13 +227,19 @@ onMounted(() => {
 <style>
 .mfa-setup {
   h2 {
-    text-align: center;
     hyphens: none;
     margin-block: 0 1.5rem;
     font-size: var(--auth-font-size-step-heading, var(--font-size-lg));
   }
 
-  .mfa-setup-intro p {
+  /* As the page title, the step heading keeps the app's own h1 size. */
+  > h1 {
+    text-align: center;
+    hyphens: none;
+    margin-block: 0 1.5rem;
+  }
+
+  .mfa-setup-description {
     max-width: 60ch;
   }
 
