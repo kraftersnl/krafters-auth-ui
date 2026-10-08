@@ -11,6 +11,8 @@ export function useMfa() {
 
   const mfaStep = useState<MfaStep>('mfaStep', () => 1);
   const qrCode = useState('qrCode', () => '');
+  /** The `otpauth://` link the QR code holds: opens an authenticator app. */
+  const qrCodeUrl = useState('qrCodeUrl', () => '');
   const recoveryCodes = useState<string[]>('recoveryCodes', () => []);
   const mfaError = useState<AuthErrorData | null>('mfaError', () => null);
 
@@ -66,6 +68,7 @@ export function useMfa() {
   function resetMfa() {
     mfaStep.value = 1;
     qrCode.value = '';
+    qrCodeUrl.value = '';
     mfaError.value = null;
     loadingConfirmationCode.value = false;
     loadingSolveMfaChallenge.value = false;
@@ -147,10 +150,11 @@ export function useMfa() {
     mfaError.value = null;
 
     try {
-      const data = await settingsRequest<{ svg?: string }>(
+      const data = await settingsRequest<{ svg?: string; url?: string }>(
         '/api/user/two-factor-qr-code',
       );
       if (data?.svg) qrCode.value = data.svg;
+      if (data?.url) qrCodeUrl.value = data.url;
     } catch (error) {
       setMfaError(error);
     }
@@ -207,11 +211,27 @@ export function useMfa() {
     }
   }
 
+  /**
+   * The secret in the QR code, for typing into an authenticator app that
+   * cannot scan it. Read from the link, so it always matches the code.
+   */
+  const setupKey = computed(() => {
+    if (!qrCodeUrl.value) return '';
+
+    try {
+      return new URL(qrCodeUrl.value).searchParams.get('secret') ?? '';
+    } catch {
+      return '';
+    }
+  });
+
   return {
     mfaStep,
     mfaCredentials,
     mfaError,
     qrCode,
+    qrCodeUrl,
+    setupKey,
     recoveryCodes,
     loadingConfirmationCode,
     loadingSolveMfaChallenge,

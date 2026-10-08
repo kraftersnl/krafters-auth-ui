@@ -9,7 +9,7 @@ const { mfaCredentials, mfaError, codeInputRef } = useMfa();
       v-model="mfaCredentials.code"
       required
       autofocus
-      autocomplete="one-time-code"
+      autocomplete="off"
       inputmode="numeric"
       pattern="[0-9]{6}"
       name="code"

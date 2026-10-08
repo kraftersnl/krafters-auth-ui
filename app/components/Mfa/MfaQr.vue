@@ -1,31 +1,170 @@
 <script setup lang="ts">
-const { getQrCode, qrCode } = useMfa();
+/**
+ * Connects an authenticator app. On a desktop the QR code leads, with the
+ * setup key behind a toggle. On a phone, where the app usually lives on the
+ * device showing the code, scanning is of little use: a link that opens the
+ * app leads, then the setup key, with the QR code behind a toggle for setting
+ * up another device.
+ */
+const { getQrCode, qrCode, qrCodeUrl } = useMfa();
+
+const isHandheld = useMediaQuery('(pointer: coarse) and (max-width: 479px)');
 
 onMounted(() => getQrCode());
 </script>
 
 <template>
-  <div class="mfa-qr-code-wrapper">
-    <!-- role="img" so the inlined SVG is announced by its own name instead of
-         having its paths walked; a bare aria-label on a generic div is not
-         exposed by assistive technology. The wrapper renders before the code
-         arrives so its minimum size holds the space; it only becomes an image
-         once there is one. -->
-    <div
-      :role="qrCode ? 'img' : undefined"
-      :aria-label="qrCode ? $t('mfa.qr-code-alt') : undefined"
-      class="qr-code-wrapper"
-      v-html="qrCode"
-    />
+  <div class="mfa-qr" :class="{ 'is-handheld': isHandheld }">
+    <template v-if="isHandheld">
+      <div class="mfa-qr-app-link">
+        <Button
+          :href="qrCodeUrl || undefined"
+          external
+          variant="green"
+          size="lg"
+          icon="material-symbols:add-to-home-screen-outline-rounded"
+          :label="$t('mfa.add-to-app')"
+          :loading="!qrCodeUrl"
+        />
+        <p>{{ $t('mfa.add-to-app-description') }}</p>
+      </div>
 
-    <div class="qr-code-description">
-      <h2>{{ $t('mfa.qr') }}</h2>
-      <p>{{ $t('mfa.qr-description') }}</p>
-    </div>
+      <p class="mfa-qr-divider">{{ $t('mfa.setup-key-or') }}</p>
+
+      <Card background-color="bg" class="mfa-setup-key-card">
+        <MfaSetupKey :heading-level="2" />
+      </Card>
+    </template>
+
+    <component :is="isHandheld ? 'details' : 'div'" class="mfa-qr-code-section">
+      <summary v-if="isHandheld" class="mfa-qr-toggle">
+        {{ $t('mfa.qr-toggle') }}
+        <Icon name="material-symbols:expand-more-rounded" />
+      </summary>
+
+      <div class="mfa-qr-code-wrapper">
+        <!-- role="img" so the inlined SVG is announced by its own name instead
+             of having its paths walked; a bare aria-label on a generic div is
+             not exposed by assistive technology. The wrapper renders before the
+             code arrives so its minimum size holds the space; it only becomes
+             an image once there is one. -->
+        <div
+          :role="qrCode ? 'img' : undefined"
+          :aria-label="qrCode ? $t('mfa.qr-code-alt') : undefined"
+          class="qr-code-wrapper"
+          v-html="qrCode"
+        />
+
+        <div class="qr-code-description">
+          <h2>{{ $t('mfa.qr') }}</h2>
+          <p>{{ $t('mfa.qr-description') }}</p>
+        </div>
+      </div>
+    </component>
+
+    <details v-if="!isHandheld" class="mfa-setup-key-details">
+      <summary class="mfa-qr-toggle">
+        {{ $t('mfa.setup-key-toggle') }}
+        <Icon name="material-symbols:expand-more-rounded" />
+      </summary>
+
+      <MfaSetupKey />
+    </details>
   </div>
 </template>
 
 <style>
+.mfa-qr {
+  display: grid;
+  gap: 1.25rem;
+
+  .mfa-qr-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--auth-font-size-small, var(--font-size-sm));
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    .iconify {
+      flex-shrink: 0;
+      font-size: 1.25em;
+      transition: rotate var(--duration-sm);
+    }
+  }
+
+  details[open] > .mfa-qr-toggle .iconify {
+    rotate: 180deg;
+  }
+
+  .mfa-setup-key-details {
+    border-radius: var(--radius-md);
+    padding-inline: 1rem;
+    background-color: var(--color-bg);
+
+    &[open] {
+      padding-block-end: 1rem;
+    }
+  }
+
+  /* Phone: the app link leads, the key follows, all centred. */
+  &.is-handheld {
+    text-align: center;
+
+    .mfa-qr-app-link {
+      display: grid;
+      gap: 0.5rem;
+
+      .button {
+        justify-content: center;
+        inline-size: 100%;
+      }
+
+      p {
+        margin-block: 0;
+        font-size: var(--auth-font-size-small, var(--font-size-sm));
+      }
+    }
+
+    .mfa-qr-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-block: 0;
+      font-size: var(--auth-font-size-small, var(--font-size-sm));
+
+      &::before,
+      &::after {
+        content: '';
+        flex-grow: 1;
+        block-size: 1px;
+        background-color: var(--auth-color-divider, var(--color-grey-light));
+      }
+    }
+
+    .mfa-setup-key-row {
+      flex-direction: column;
+    }
+
+    .mfa-qr-toggle {
+      justify-content: center;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .mfa-qr-code-wrapper {
+      margin-block-start: 0.5rem;
+    }
+  }
+}
+
 .mfa-qr-code-wrapper {
   display: grid;
   padding: 1rem;
@@ -40,7 +179,7 @@ onMounted(() => getQrCode());
     text-align: center;
 
     @media (min-width: 480px) {
-      text-align: left;
+      text-align: start;
     }
 
     h2 {
@@ -59,7 +198,6 @@ onMounted(() => getQrCode());
     display: grid;
     border-radius: var(--radius-sm);
     background-color: var(--color-bg);
-    max-width: max-content;
     min-height: 192px;
     max-height: 192px;
     min-width: 192px;
