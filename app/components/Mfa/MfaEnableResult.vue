@@ -1,4 +1,9 @@
 <script setup lang="ts">
+const { headingLevel = 2 } = defineProps<{
+  /** Level of the "Recovery codes" heading: one below the title it sits under. */
+  headingLevel?: 2 | 3 | 4;
+}>();
+
 const { recoveryCodes, mfaError } = useMfa();
 </script>
 
@@ -6,19 +11,15 @@ const { recoveryCodes, mfaError } = useMfa();
   <div class="mfa-enable-result-content">
     <AuthError v-if="mfaError" :data="mfaError" />
 
-    <template v-else-if="recoveryCodes.length">
-      <h2>{{ $t('mfa.recovery-code', 2) }}</h2>
-      <MfaRecoveryCodeList />
-    </template>
+    <MfaRecoveryCodeList
+      v-else-if="recoveryCodes.length"
+      :heading-level="headingLevel"
+    />
   </div>
 </template>
 
 <style>
 .mfa-enable-result-content {
   display: grid;
-
-  h2 {
-    font-size: var(--auth-font-size-label, var(--font-size-md));
-  }
 }
 </style>

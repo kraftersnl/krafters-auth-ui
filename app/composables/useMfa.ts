@@ -34,6 +34,8 @@ export function useMfa() {
     () => false,
   );
 
+  const loadingDisableMfa = useState('loadingDisableMfa', () => false);
+
   const codeInputRef = useState<InputComponent | null>(
     'codeInputRef',
     () => null,
@@ -67,6 +69,7 @@ export function useMfa() {
     mfaError.value = null;
     loadingConfirmationCode.value = false;
     loadingSolveMfaChallenge.value = false;
+    loadingDisableMfa.value = false;
     mfaCredentials.value = {
       code: '',
       recovery_code: '',
@@ -116,18 +119,26 @@ export function useMfa() {
     }
   }
 
-  async function disableMfa() {
+  /**
+   * Turns MFA off and moves on to the result step. With `showResult: false`
+   * the flow stays where it is and keeps loading, for a caller that leaves
+   * right away (closing the dialog resets it).
+   */
+  async function disableMfa({ showResult = true } = {}) {
     mfaError.value = null;
+    loadingDisableMfa.value = true;
 
     try {
       await settingsRequest('/api/user/two-factor-authentication', {
         method: 'DELETE',
       });
-      mfaStep.value = 6;
+      if (showResult) mfaStep.value = 6;
       await refreshIdentity();
+      if (showResult) loadingDisableMfa.value = false;
       return true;
     } catch (error) {
       setMfaError(error);
+      loadingDisableMfa.value = false;
       return false;
     }
   }
@@ -204,6 +215,7 @@ export function useMfa() {
     recoveryCodes,
     loadingConfirmationCode,
     loadingSolveMfaChallenge,
+    loadingDisableMfa,
     loadingGenerateRecoveryCodes,
     codeInputRef,
     recoveryCodeInputRef,

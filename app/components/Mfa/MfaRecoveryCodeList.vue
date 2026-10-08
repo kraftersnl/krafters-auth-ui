@@ -1,12 +1,26 @@
 <script setup lang="ts">
+const { headingLevel = undefined } = defineProps<{
+  /**
+   * Titles the card "Recovery codes" with a heading of this level. Leave it
+   * off where the surrounding title already says so, as in a dialog about them.
+   */
+  headingLevel?: 2 | 3 | 4;
+}>();
+
 const { recoveryCodes } = useMfa();
 </script>
 
 <template>
-  <div>
-    <p>{{ $t('mfa.recovery-code-description') }}</p>
+  <div class="mfa-recovery-code-list">
+    <Card background-color="bg" class="mfa-recovery-codes-card">
+      <component
+        :is="`h${headingLevel}`"
+        v-if="headingLevel"
+        class="mfa-recovery-codes-heading"
+      >
+        {{ $t('mfa.recovery-code', 2) }}
+      </component>
 
-    <Card class="mfa-recovery-codes-card">
       <ul role="list">
         <li v-for="code in recoveryCodes" :key="code">{{ code }}</li>
       </ul>
@@ -17,12 +31,27 @@ const { recoveryCodes } = useMfa();
         :label="$t('mfa.recovery-codes-copy')"
       />
     </Card>
+
+    <p class="mfa-recovery-codes-description">
+      {{ $t('mfa.recovery-code-description') }}
+    </p>
   </div>
 </template>
 
 <style>
+.mfa-recovery-code-list {
+  .mfa-recovery-codes-description {
+    margin-block: 1rem 0;
+  }
+}
+
 .mfa-recovery-codes-card {
   margin-inline: auto;
+
+  .mfa-recovery-codes-heading {
+    margin-block: 0 0.75rem;
+    font-size: var(--auth-font-size-label, var(--font-size-md));
+  }
 
   ul {
     display: grid;
@@ -32,8 +61,7 @@ const { recoveryCodes } = useMfa();
      * side, one otherwise, and never a code broken across lines.
      */
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 21ch), 1fr));
-    column-gap: 1rem;
-    text-align: center;
+    column-gap: 2rem;
     white-space: nowrap;
     font-family: monospace;
     font-size: var(--auth-font-size-recovery-code-list, var(--font-size-sm));
@@ -43,6 +71,18 @@ const { recoveryCodes } = useMfa();
   .copy-button {
     --font-size: var(--auth-font-size-dialog-button, var(--font-size-sm));
     margin-block-start: 1rem;
+  }
+
+  /*
+   * On small screens the codes stack in one column and the whole card centres
+   * around it. One column is forced here so the card never centres two.
+   */
+  @media (max-width: 479px) {
+    text-align: center;
+
+    ul {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

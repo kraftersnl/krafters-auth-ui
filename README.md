@@ -41,6 +41,7 @@ Apps don't agree on what a font size token _name_ means: one app's `--font-size-
 | -------------------------------------- | ------------------ | ----------------------------------------------------------------- |
 | `--auth-font-size-heading`             | `--font-size-xxl`  | Sign-in challenge title                                           |
 | `--auth-font-size-intro`               | `--font-size-lg`   | Sign-in challenge intro text                                      |
+| `--auth-font-size-step-heading`        | `--font-size-lg`   | Step heading of `MfaSetup`                                        |
 | `--auth-font-size-label`               | `--font-size-md`   | Code input labels, QR code and recovery codes headings            |
 | `--auth-font-size-small`               | `--font-size-sm`   | Helper and validation text, QR code description, footer links     |
 | `--auth-font-size-error`               | `--font-size-xs`   | `.auth-error`                                                     |
@@ -252,6 +253,8 @@ const {
 
 `MfaDialog` emits **`refresh`** once MFA has actually been turned on or off. The layer already refreshes the Sanctum identity itself; handle `refresh` to re-sync any copy of the user your app keeps of its own, so an "MFA enabled" badge updates immediately.
 
+If that handler takes the user elsewhere after MFA is turned off (say, back to a setup page because MFA is required), pass `:show-disable-result="false"`. The dialog then skips its "MFA is off" step and keeps the disable button loading until your handler closes it with `closeMfaDialog()`.
+
 Whether MFA is currently on stays your app's call — the flag lives in your `/api/user` response, and its name differs per backend, so the layer never guesses at it.
 
 ### Setting up MFA on a page
@@ -366,6 +369,8 @@ Reach for it to build your own flow. For the standard one, `useMfaDialog()` plus
 | `MfaQr`, `MfaEnableResult`, `MfaDisableResult`, `MfaRecoveryCodeList` | Steps of the flow, reusable on their own                     |
 | `AuthError`                                                           | Renders a Fortify error or validation payload                |
 | `PasswordConfirmationDialog`                                          | Asks for the password when Fortify's `password.confirm` does |
+
+`MfaEnableResult` and `MfaRecoveryCodeList` take a `headingLevel` (2–4) for the "Recovery codes" heading at the top of the codes card: `MfaEnableResult` defaults to 2, and `MfaRecoveryCodeList` shows no heading without one, since a dialog about recovery codes already says so in its title. Pick the level one below the heading the codes sit under; `MfaSetup` uses 3.
 
 ## Translations
 

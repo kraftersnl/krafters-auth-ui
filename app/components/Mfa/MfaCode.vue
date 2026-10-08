@@ -35,7 +35,6 @@ const { mfaCredentials, mfaError, codeInputRef } = useMfa();
 .mfa-code-input {
   display: grid;
   margin-inline: auto;
-  width: 17.5rem;
 
   label {
     text-align: center;

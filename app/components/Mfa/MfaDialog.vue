@@ -1,8 +1,19 @@
 <script setup lang="ts">
+const { showDisableResult = true } = defineProps<{
+  /**
+   * Show the "MFA is off" step after disabling. Turn it off when your
+   * `refresh` handler takes the user elsewhere straight away, such as back to
+   * a setup page because MFA is required: the dialog then keeps loading on the
+   * confirmation until that handler closes it.
+   */
+  showDisableResult?: boolean;
+}>();
+
 const { mfaDialogRef, closeMfaDialog } = useMfaDialog();
 const {
   mfaStep,
   loadingConfirmationCode,
+  loadingDisableMfa,
   mfaCredentials,
   codeInputRef,
   enableMfa,
@@ -24,7 +35,7 @@ async function handleEnterCode() {
 }
 
 async function handleDisableMfa() {
-  const success = await disableMfa();
+  const success = await disableMfa({ showResult: showDisableResult });
   if (success) emit('refresh');
 }
 
@@ -119,6 +130,7 @@ const emit = defineEmits<{
         variant="danger"
         size="lg"
         :label="$t('mfa.disable')"
+        :loading="loadingDisableMfa"
         @click="handleDisableMfa()"
       />
     </template>

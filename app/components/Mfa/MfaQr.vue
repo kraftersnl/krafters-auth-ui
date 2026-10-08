@@ -8,11 +8,12 @@ onMounted(() => getQrCode());
   <div class="mfa-qr-code-wrapper">
     <!-- role="img" so the inlined SVG is announced by its own name instead of
          having its paths walked; a bare aria-label on a generic div is not
-         exposed by assistive technology. -->
+         exposed by assistive technology. The wrapper renders before the code
+         arrives so its minimum size holds the space; it only becomes an image
+         once there is one. -->
     <div
-      v-if="qrCode"
-      role="img"
-      :aria-label="$t('mfa.qr-code-alt')"
+      :role="qrCode ? 'img' : undefined"
+      :aria-label="qrCode ? $t('mfa.qr-code-alt') : undefined"
       class="qr-code-wrapper"
       v-html="qrCode"
     />
@@ -26,7 +27,8 @@ onMounted(() => getQrCode());
 
 <style>
 .mfa-qr-code-wrapper {
-  padding: 1.25rem;
+  display: grid;
+  padding: 1rem;
   row-gap: 1.5rem;
   column-gap: 1.75rem;
 
@@ -35,6 +37,12 @@ onMounted(() => getQrCode());
   }
 
   .qr-code-description {
+    text-align: center;
+
+    @media (min-width: 480px) {
+      text-align: left;
+    }
+
     h2 {
       font-size: var(--auth-font-size-label, var(--font-size-md));
       margin-block-end: 0.5rem;
@@ -48,9 +56,14 @@ onMounted(() => getQrCode());
   }
 
   .qr-code-wrapper {
+    display: grid;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg);
     max-width: max-content;
     min-height: 192px;
+    max-height: 192px;
     min-width: 192px;
+    max-width: 192px;
     margin-inline: auto;
 
     svg {

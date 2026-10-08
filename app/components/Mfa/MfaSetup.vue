@@ -93,7 +93,13 @@ onMounted(() => {
 
 <template>
   <div class="mfa-setup">
-    <h2 ref="heading" tabindex="-1">{{ heading }}</h2>
+    <h2 ref="heading" tabindex="-1">
+      <Icon
+        v-if="mfaStep === 4"
+        name="material-symbols:check-circle-outline-rounded"
+      />
+      {{ heading }}
+    </h2>
 
     <div v-if="mfaStep === 1" class="mfa-setup-intro">
       <p>{{ $t('mfa.description') }}</p>
@@ -113,7 +119,7 @@ onMounted(() => {
       <MfaCode />
     </Form>
 
-    <MfaEnableResult v-else-if="mfaStep === 4" />
+    <MfaEnableResult v-else-if="mfaStep === 4" :heading-level="3" />
 
     <div class="mfa-setup-actions">
       <slot
@@ -192,7 +198,19 @@ onMounted(() => {
 .mfa-setup {
   h2 {
     margin-block: 0 1rem;
-    font-size: var(--auth-font-size-label, var(--font-size-md));
+    font-size: var(--auth-font-size-step-heading, var(--font-size-lg));
+  }
+
+  /* The step heading only: the QR code step has an h2 of its own. */
+  > h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .iconify {
+      flex-shrink: 0;
+      color: var(--color-green-graphic);
+    }
   }
 
   .mfa-setup-intro p {
@@ -210,16 +228,14 @@ onMounted(() => {
 
   .mfa-code-input {
     width: 100%;
-    max-width: 17.5rem;
   }
 
   .mfa-setup-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 1.5rem;
     justify-content: space-between;
-    margin-block-start: 1.5rem;
-    padding-block-start: 1rem;
+    padding-block-start: 1.5rem;
     border-block-start: 1px solid
       var(--auth-color-divider, var(--color-grey-light));
 
