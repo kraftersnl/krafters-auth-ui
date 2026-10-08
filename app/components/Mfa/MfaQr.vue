@@ -3,8 +3,8 @@
  * Connects an authenticator app. On a desktop the QR code leads, with the
  * setup key behind a toggle. On a phone, where the app usually lives on the
  * device showing the code, scanning is of little use: a link that opens the
- * app leads, then the setup key, with the QR code behind a toggle for setting
- * up another device.
+ * app leads, with two fallbacks behind toggles: the setup key, for an app
+ * that does not open from the link, and the QR code, for another device.
  */
 const { getQrCode, qrCode, qrCodeUrl } = useMfa();
 
@@ -29,11 +29,17 @@ onMounted(() => getQrCode());
           :loading="!qrCodeUrl"
         />
       </div>
-      <p class="mfa-qr-divider">{{ $t('mfa.setup-key-or') }}:</p>
 
-      <Card background-color="bg" class="mfa-setup-key-card">
-        <MfaSetupKey :heading-level="2" />
-      </Card>
+      <details class="mfa-setup-key-section">
+        <summary class="mfa-qr-toggle">
+          {{ $t('mfa.setup-key-toggle-handheld') }}
+          <Icon name="material-symbols:expand-more-rounded" mode="svg" />
+        </summary>
+
+        <Card background-color="bg" class="mfa-setup-key-card">
+          <MfaSetupKey />
+        </Card>
+      </details>
     </template>
 
     <component :is="isHandheld ? 'details' : 'div'" class="mfa-qr-code-section">
@@ -116,8 +122,9 @@ onMounted(() => getQrCode());
     }
   }
 
-  /* Phone: the app link leads, the key follows, all centred. */
+  /* Phone: the app link leads, its fallbacks follow as toggles, all centred. */
   &.is-handheld {
+    gap: 0.5rem;
     text-align: center;
 
     .mfa-qr-app-link {
@@ -140,20 +147,8 @@ onMounted(() => getQrCode());
       }
     }
 
-    .mfa-qr-divider {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-block: 0.25rem;
-      font-size: var(--auth-font-size-small, var(--font-size-xs));
-
-      &::before,
-      &::after {
-        content: '';
-        flex-grow: 1;
-        block-size: 1px;
-        background-color: var(--auth-color-divider, var(--color-grey-light));
-      }
+    .mfa-qr-app-link {
+      margin-block-end: 0.75rem;
     }
 
     .mfa-setup-key-row {

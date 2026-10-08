@@ -371,7 +371,7 @@ Reach for it to build your own flow. For the standard one, `useMfaDialog()` plus
 | `AuthError`                                                           | Renders a Fortify error or validation payload                |
 | `PasswordConfirmationDialog`                                          | Asks for the password when Fortify's `password.confirm` does |
 
-`MfaQr` connects the authenticator app two ways. On a desktop the QR code leads, with the setup key behind a "can't scan?" toggle. On a phone (a coarse pointer below 480px), where the app is usually on the same device, a link that opens the app leads (the `otpauth://` link Fortify's QR code endpoint returns next to the SVG), then the setup key, with the QR code behind a toggle for another device. Apps that do not handle the link still have the key.
+`MfaQr` connects the authenticator app two ways. On a desktop the QR code leads, with the setup key behind a "can't scan?" toggle. On a phone (a coarse pointer below 480px), where the app is usually on the same device, a link that opens the app leads (the `otpauth://` link Fortify's QR code endpoint returns next to the SVG), with two fallbacks behind toggles: the setup key, for apps that do not open from the link, and the QR code, for another device.
 
 `MfaEnableResult` and `MfaRecoveryCodeList` take a `headingLevel` (2–4) for the "Recovery codes" heading at the top of the codes card: `MfaEnableResult` defaults to 2, and `MfaRecoveryCodeList` shows no heading without one, since a dialog about recovery codes already says so in its title. Pick the level one below the heading the codes sit under; `MfaSetup` uses 3.
 
