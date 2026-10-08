@@ -21,15 +21,15 @@ onMounted(() => getQrCode());
           :href="qrCodeUrl || undefined"
           external
           variant="green"
-          size="lg"
+          size="xl"
+          font-size="xs"
+          icon-size="md"
           icon="material-symbols:add-to-home-screen-outline-rounded"
           :label="$t('mfa.add-to-app')"
           :loading="!qrCodeUrl"
         />
-        <p>{{ $t('mfa.add-to-app-description') }}</p>
       </div>
-
-      <p class="mfa-qr-divider">{{ $t('mfa.setup-key-or') }}</p>
+      <p class="mfa-qr-divider">{{ $t('mfa.setup-key-or') }}:</p>
 
       <Card background-color="bg" class="mfa-setup-key-card">
         <MfaSetupKey :heading-level="2" />
@@ -125,6 +125,10 @@ onMounted(() => getQrCode());
       .button {
         justify-content: center;
         inline-size: 100%;
+
+        .button-text {
+          padding-block: 0.5rem;
+        }
       }
 
       p {
@@ -137,8 +141,8 @@ onMounted(() => getQrCode());
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      margin-block: 0;
-      font-size: var(--auth-font-size-small, var(--font-size-sm));
+      margin-block: 0.25rem;
+      font-size: var(--auth-font-size-small, var(--font-size-xs));
 
       &::before,
       &::after {
