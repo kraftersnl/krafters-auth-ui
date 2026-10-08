@@ -49,9 +49,17 @@ const {
 
   .dialog-buttons {
     margin-block-start: 1.5rem;
+    justify-content: space-between;
 
     .button {
       --font-size: var(--auth-font-size-dialog-button, var(--font-size-sm));
+      .button-text {
+        padding-block: 0.25rem;
+      }
+
+      @media (min-width: 375px) {
+        max-width: max-content;
+      }
     }
   }
 

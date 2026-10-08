@@ -40,6 +40,8 @@ const { recoveryCodes } = useMfa();
 
 <style>
 .mfa-recovery-code-list {
+  container-type: inline-size;
+
   .mfa-recovery-codes-description {
     margin-block: 1rem 0;
   }
@@ -61,7 +63,7 @@ const { recoveryCodes } = useMfa();
      * side, one otherwise, and never a code broken across lines.
      */
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 21ch), 1fr));
-    column-gap: 2rem;
+    column-gap: 1.5rem;
     white-space: nowrap;
     font-family: monospace;
     font-size: var(--auth-font-size-recovery-code-list, var(--font-size-sm));
@@ -77,7 +79,7 @@ const { recoveryCodes } = useMfa();
    * On small screens the codes stack in one column and the whole card centres
    * around it. One column is forced here so the card never centres two.
    */
-  @media (max-width: 479px) {
+  @container (max-width: 426px) {
     text-align: center;
 
     ul {

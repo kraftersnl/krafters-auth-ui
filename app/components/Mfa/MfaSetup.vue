@@ -94,10 +94,6 @@ onMounted(() => {
 <template>
   <div class="mfa-setup">
     <h2 ref="heading" tabindex="-1">
-      <Icon
-        v-if="mfaStep === 4"
-        name="material-symbols:check-circle-outline-rounded"
-      />
       {{ heading }}
     </h2>
 
@@ -197,20 +193,10 @@ onMounted(() => {
 <style>
 .mfa-setup {
   h2 {
-    margin-block: 0 1rem;
+    text-align: center;
+    hyphens: none;
+    margin-block: 0 1.5rem;
     font-size: var(--auth-font-size-step-heading, var(--font-size-lg));
-  }
-
-  /* The step heading only: the QR code step has an h2 of its own. */
-  > h2 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    .iconify {
-      flex-shrink: 0;
-      color: var(--color-green-graphic);
-    }
   }
 
   .mfa-setup-intro p {
