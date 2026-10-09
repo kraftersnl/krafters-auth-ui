@@ -198,8 +198,9 @@ onMounted(() => getQrCode());
 
   .qr-code-wrapper {
     display: grid;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     background-color: var(--color-bg);
+    border: 1rem solid var(--color-bg);
     min-height: 192px;
     max-height: 192px;
     min-width: 192px;
